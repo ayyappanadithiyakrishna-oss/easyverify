@@ -48,3 +48,13 @@ Deployment URLs and final GitHub CI results will be appended after deployment ch
 - Ollama 0.40.4 installed; localhost-only user service running, model llama3.2:3b downloaded. Existing models preserved. Public visitors need their own local Ollama or use the source guide.
 - Google OAuth is code-complete behind a disabled flag, not provider-tested or enabled. The requested Supabase organization remains inaccessible, so live accounts remain unavailable.
 - Preview/production release results follow after deployment.
+
+### Hosted release verification
+
+PR #3 merged after both GitHub CI runs passed for reviewed source `5babea2272bce9490d00ba0fe771138e844421d9` (merge commit `121fc2f`). Code Review plugin diagnostics showed no failed checks; nonblocking notices concern old pinned Actions running under Node 24 and the upcoming Ubuntu runner-label transition.
+
+Preview: `dpl_9FGwJkMu4xDpfUC5rGmrX7qHj8Kv`. Production: `dpl_uqHhDFMzzANXte8j68iKYVKps5Vy`, READY, aliased to https://easyverify.vercel.app. Both deployed from the reviewed frozen Git archive.
+
+Production checks: landing/demo render; dark mode persists across routes; 390px layout has no horizontal overflow; source-guide contractor answer retains official citation; model/library assets return 200; hosted face lab produces a real repeated-photo 100/100 result. Photo comparison makes no POST/upload requests.
+
+Local Llama inference worked in the localhost browser test. The hosted site's optional loopback connection was blocked in the automated browser by local-network permission policy, and the source guide fallback correctly appeared. No hosted-to-local Llama end-to-end success is claimed. A normal visitor must grant their browser's local-network permission and run Ollama; no public Ollama server is deployed.
