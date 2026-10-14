@@ -58,3 +58,20 @@ test("unrelated model output cannot be presented as cited guidance", () => {
     false,
   );
 });
+
+test("model cannot reverse an employee completion obligation", () => {
+  assert.equal(
+    groundedAnswer(
+      "The employee does not complete Section 1 on the first day of paid work.",
+      helpAnswer("Section 1", now).answer,
+    ),
+    false,
+  );
+  assert.equal(
+    groundedAnswer(
+      "Review Section 2 within 3 business days after paid work begins.",
+      helpAnswer("Section 2", now).answer,
+    ),
+    true,
+  );
+});

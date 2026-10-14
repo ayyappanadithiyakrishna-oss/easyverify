@@ -285,8 +285,10 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
                     </ul>
                   )}
                   {/Llama|SmolLM2/.test(entry.engine) && (
-                    <details>
-                      <summary>Read the source-guide reference</summary>
+                    <details open>
+                      <summary>
+                        Rule reference · check the AI explanation
+                      </summary>
                       <p>{helpAnswer(entry.question).answer}</p>
                     </details>
                   )}
