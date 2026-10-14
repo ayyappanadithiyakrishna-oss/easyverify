@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowRight, Copy, Printer, Check, ChevronDown } from "lucide-react";
 import { states } from "@/lib/validation";
@@ -84,6 +85,11 @@ export function PublicPlanner() {
               return;
             }
             setPlan(result.data);
+            window.dispatchEvent(
+              new CustomEvent("easyverify-plan", {
+                detail: sharePlan(result.data),
+              }),
+            );
             setCompleted([]);
             setMessage(
               "Your plan is ready. Open any step to see its source and reasoning.",
@@ -203,6 +209,12 @@ export function PublicPlanner() {
           <h2>{plan ? "Your next steps" : "Your plan starts here"}</h2>
           {plan && (
             <div className="actions">
+              <Link
+                href={`/assistant?p=${encodeURIComponent(sharePlan(plan))}`}
+                className="button secondary"
+              >
+                Ask about this plan
+              </Link>
               <button
                 className="icon-button"
                 aria-label="Print hiring plan"

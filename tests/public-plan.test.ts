@@ -5,6 +5,7 @@ import {
   readSharedPlan,
   planHire,
   type PublicPlan,
+  planReference,
 } from "../lib/public-plan";
 const plan: PublicPlan = {
   profile: {
@@ -42,4 +43,14 @@ test("untrusted share links reject contradictory contracts and imaginary dates",
     null,
   );
   assert.equal(readSharedPlan("x".repeat(4097)), null);
+});
+
+test("chat reference uses evaluated calendar targets and review status", () => {
+  const result = planReference("When is Section 2 due?", {
+    ...plan,
+    profile: { ...plan.profile, closures: ["2026-10-20"] },
+  });
+  assert.match(result.answer, /2026-10-23/);
+  assert.ok(result.sources[0].url.includes("completing-section-2"));
+  assert.match(planReference("E-Verify", plan).answer, /Needs review/);
 });

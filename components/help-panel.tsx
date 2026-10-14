@@ -1,4 +1,9 @@
 "use client";
+import {
+  planReference,
+  readSharedPlan,
+  type PublicPlan,
+} from "@/lib/public-plan";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, X, ArrowUp, BookOpen } from "lucide-react";
@@ -9,7 +14,11 @@ import {
   groundedAnswer,
   type HelpAnswer,
 } from "@/lib/help";
-type Entry = HelpAnswer & { question: string; engine: string };
+type Entry = HelpAnswer & {
+  question: string;
+  engine: string;
+  reference: string;
+};
 export function HelpPanel({ full = false }: { full?: boolean }) {
   const [open, setOpen] = useState(full);
   const launcher = useRef<HTMLButtonElement>(null);
@@ -21,6 +30,14 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
     launcher.current?.focus();
   }
   const [question, setQuestion] = useState("");
+  const [context, setContext] = useState<PublicPlan | null>(null);
+  useEffect(() => {
+    setContext(readSharedPlan(new URLSearchParams(location.search).get("p")));
+    const update = (event: Event) =>
+      setContext(readSharedPlan((event as CustomEvent<string>).detail));
+    window.addEventListener("easyverify-plan", update);
+    return () => window.removeEventListener("easyverify-plan", update);
+  }, []);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [local, setLocal] = useState(false);
   const [modelChoice, setModelChoice] = useState("fast");
@@ -109,7 +126,14 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
     setError("");
     setBusy(true);
     setPartial("");
-    const reference = helpAnswer(value);
+    const reference =
+      context &&
+      /plan|due|deadline|section|documents|contract|far|requirements|e.verify|retain|retention|next step/i.test(
+        value,
+      ) &&
+      !sensitiveQuestion(value)
+        ? planReference(value, context)
+        : helpAnswer(value);
     let answer = reference.answer;
     let engine = "Rule reference";
     if (modelReady && !sensitiveQuestion(value)) {
@@ -162,16 +186,25 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
         )
           throw new Error("Ollama returned an empty answer.");
         answer = data.message.content.slice(0, 3000);
+        if (!groundedAnswer(answer, reference.answer))
+          throw new Error("Ollama answer did not match the rule reference.");
         engine = "Llama 3.2 · this computer";
       } catch {
+        answer = reference.answer;
         setError(
-          "Could not reach this computer’s Ollama. Your browser may need local-network permission, and Ollama must be running with the EasyVerify origin allowed. Showing the source guide instead.",
+          "Ollama was unavailable or its answer did not match the reference. It must be running with the EasyVerify origin allowed and browser local-network permission. Showing the rule reference instead.",
         );
       }
     }
     setEntries((previous) => [
       ...previous.slice(-5),
-      { question: value, answer, sources: reference.sources, engine },
+      {
+        question: value,
+        answer,
+        sources: reference.sources,
+        engine,
+        reference: reference.answer,
+      },
     ]);
     setBusy(false);
   }
@@ -206,6 +239,12 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
               Ask about a step, compare situations, and ask follow-up questions.
               Keep names and identity information out of chat.
             </p>
+            {context && (
+              <p className="small">
+                Using your public plan: {context.profile.state} · start{" "}
+                {context.hireDate}
+              </p>
+            )}
             {!modelReady && (
               <div className="model-onboarding">
                 <strong>A local chatbot, inside EasyVerify.</strong>
@@ -289,7 +328,7 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
                       <summary>
                         Rule reference · check the AI explanation
                       </summary>
-                      <p>{helpAnswer(entry.question).answer}</p>
+                      <p>{entry.reference}</p>
                     </details>
                   )}
                 </article>

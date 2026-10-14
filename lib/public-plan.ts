@@ -1,3 +1,5 @@
+import { evaluate } from "./engine";
+import { rules } from "./rules";
 import { z } from "zod";
 import { profileSchema, hireSchema } from "./validation";
 import type { Profile, Hire } from "./types";
@@ -50,4 +52,49 @@ export function readSharedPlan(value: string | null) {
   } catch {
     return null;
   }
+}
+
+export function planReference(question: string, plan: PublicPlan) {
+  const results = evaluate(plan.profile, planHire(plan), rules).filter(
+    (requirement) => requirement.result !== "unmatched",
+  );
+  const selected = results
+    .filter((requirement) =>
+      /section\s*1/i.test(question)
+        ? requirement.id === "i9-section1"
+        : /section\s*2|documents/i.test(question)
+          ? requirement.id === "i9-section2"
+          : /retention|keep/i.test(question)
+            ? requirement.id === "i9-retention"
+            : /contract|far/i.test(question)
+              ? requirement.ruleIds.includes("contractor")
+              : /e.verify/i.test(question)
+                ? requirement.ruleIds.some((id) =>
+                    ["everify-case", "participation", "contractor"].includes(
+                      id,
+                    ),
+                  )
+                : true,
+    )
+    .slice(0, 3);
+  return {
+    answer:
+      `Your plan: ${plan.profile.state}, ${plan.profile.headcount} employees, first paid day ${plan.hireDate}, calendar ${plan.profile.calendar}.\n\n` +
+      selected
+        .map(
+          (requirement) =>
+            `${requirement.title}: ${requirement.summary} ${requirement.needsReview ? "Needs review; no confirmed deadline." : requirement.due ? `Planning target: ${requirement.due}.` : "No fixed target."}`,
+        )
+        .join("\n\n"),
+    sources: [
+      ...new Map(
+        selected
+          .flatMap((requirement) => requirement.sources)
+          .map((source) => [
+            source.url,
+            { title: source.title, url: source.url, reviewed: source.reviewed },
+          ]),
+      ).values(),
+    ],
+  };
 }
