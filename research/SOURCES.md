@@ -27,3 +27,7 @@ The artifact is an export inventory of a nine-screen prototype and flow map. Sou
 ## Source archive recovery
 
 The latest Claude `.dc.html` screen files were subsequently found inside the vault's `frames-000.zip`, version `1790228895-696e`, and recovered as references under `archive/claude-wireframes`. The earlier note that executable source was not present in the inspected Markdown note remains true, but the archive did contain the original screen templates. These are wireframes, not a verified production backend.
+
+## Program history verified
+
+Read the official E-Verify History and Milestones page (https://www.e-verify.gov/about-e-verify/history-and-milestones), last updated March 10, 2025. Verified the 1986 employer-review framework, 1996 pilot authorization, 1997 six-state Basic Pilot launch, 2004 web access, 2007 E-Verify name/photo-matching changes, and 2024 E-Verify+ trial. The historical timeline is separate from current legal applicability and does not make unverified authorship claims.

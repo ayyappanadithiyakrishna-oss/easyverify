@@ -21,7 +21,16 @@ export function match(
         : children.some((c) => c.result === null)
           ? null
           : false;
-    return { result, trace: children.flatMap((c) => c.trace) };
+    return {
+      result,
+      trace: children.length
+        ? children.flatMap((c) => c.trace)
+        : [
+            all
+              ? "Federal baseline: an ordinary new paid hire in the United States."
+              : "No applicability conditions matched.",
+          ],
+    };
   }
   const actual = p[condition.field];
   const unresolved = actual === "unknown" && condition.equals !== "unknown";

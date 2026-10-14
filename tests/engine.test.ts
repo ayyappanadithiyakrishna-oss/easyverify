@@ -168,3 +168,10 @@ test("repeated evaluation never mutates the source dataset or duplicates citatio
   assert.equal(otherState.sources.length, 1);
   assert.equal(otherState.needsReview, false);
 });
+
+test("baseline requirements explain the ordinary-new-hire scope", () => {
+  const result = evaluate(p, hire, rules, now).find(
+    (r) => r.id === "i9-section1",
+  )!;
+  assert.match(result.trace.join(" "), /ordinary new paid hire/);
+});
