@@ -58,3 +58,13 @@ Preview: `dpl_9FGwJkMu4xDpfUC5rGmrX7qHj8Kv`. Production: `dpl_uqHhDFMzzANXte8j68
 Production checks: landing/demo render; dark mode persists across routes; 390px layout has no horizontal overflow; source-guide contractor answer retains official citation; model/library assets return 200; hosted face lab produces a real repeated-photo 100/100 result. Photo comparison makes no POST/upload requests.
 
 Local Llama inference worked in the localhost browser test. The hosted site's optional loopback connection was blocked in the automated browser by local-network permission policy, and the source guide fallback correctly appeared. No hosted-to-local Llama end-to-end success is claimed. A normal visitor must grant their browser's local-network permission and run Ollama; no public Ollama server is deployed.
+
+
+## Public planner and embedded AI release
+
+- Repository visibility verified PUBLIC. Common secret-pattern scan across Git object history found no matches before conversion; this is a scoped scan, not a complete security audit.
+- Obsidian: created 255 document nodes and eight project nodes under Laptop Library, linked a Graph Hub from Core Memory, and checked generated wikilinks for missing targets (zero). Modified index notes backed up under ~/.codex/work/backups/2026-10-14-obsidian-graph. No Memory snapshots or confirmed fields edited.
+- Local checks: 43 tests, typecheck, lint, production build, and zero npm production audit vulnerabilities.
+- Planner browser checks: account-free generation, unknown answers retained, closure moved Section 2 target from October 22 to October 23, share URL recreated eight requirements after reload, and 390px pages did not overflow. Share-schema tests reject malformed/overlong dates and contradictory contracts and omit business names.
+- Browser Llama: actual pinned 1B q8 model downloaded and initialized via local WASM worker, with no Ollama installation required. A first single-thread generation was too slow and stopped; cross-origin isolation/multithreading, shorter generation, and streaming feedback were added. Final generation/deployment checks are recorded below when complete.
+- Render/Hugging Face Docker configuration prepared, not deployed. Supabase organization and Google provider remain unavailable; live account setup has not been completed. Vercel Git linking still failed despite public repository, so releases use frozen Git archives.

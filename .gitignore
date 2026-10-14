@@ -13,3 +13,5 @@ supabase/.temp/
 .gstack/
 .vercel
 next-env.d.ts
+
+/public/llama-worker.js

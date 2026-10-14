@@ -451,3 +451,8 @@ Max-width 1300px centered, 24px outer padding. Top nav: 52px tall transparent he
 
 ## EasyVerify implementation
 Use the supplied system-font substitutes; no proprietary Cursor font files are included. Dark mode uses warm charcoal surfaces and light parchment ink. Orange accents identify navigation and source links, while primary buttons retain ink contrast.
+
+
+## October 14 public product redesign
+
+User rejected the prior parchment presentation. Current direction: ink-blue hero, slate surfaces, mint action color, an explicit hiring sequence, compact purposeful navigation, and a free public planner. The old contest image is replaced by a restrained text link. Dark/light modes retain consistent semantic tokens. The original supplied Cursor reference above is preserved as history.

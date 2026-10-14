@@ -1,4 +1,5 @@
 "use client";
+import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, X, ArrowUp, BookOpen } from "lucide-react";
 import {
@@ -8,8 +9,8 @@ import {
   type HelpAnswer,
 } from "@/lib/help";
 type Entry = HelpAnswer & { question: string; engine: string };
-export function HelpPanel() {
-  const [open, setOpen] = useState(false);
+export function HelpPanel({ full = false }: { full?: boolean }) {
+  const [open, setOpen] = useState(full);
   const launcher = useRef<HTMLButtonElement>(null);
   useEffect(() => {
     if (open) document.getElementById("help-question")?.focus();
@@ -21,6 +22,78 @@ export function HelpPanel() {
   const [question, setQuestion] = useState("");
   const [entries, setEntries] = useState<Entry[]>([]);
   const [local, setLocal] = useState(false);
+  const [modelReady, setModelReady] = useState(false);
+  const [modelLoading, setModelLoading] = useState(false);
+  const [modelStatus, setModelStatus] = useState("");
+  const [partial, setPartial] = useState("");
+  const worker = useRef<Worker | null>(null);
+  const pending = useRef<{
+    resolve: (answer: string) => void;
+    reject: (error: Error) => void;
+  } | null>(null);
+  useEffect(
+    () => () => {
+      worker.current?.terminate();
+      pending.current?.reject(new Error("Chat closed."));
+    },
+    [],
+  );
+  function getWorker() {
+    if (!worker.current) {
+      worker.current = new Worker("/llama-worker.js", { type: "module" });
+      worker.current.onmessage = (event) => {
+        const data = event.data;
+        if (data.type === "chunk")
+          setPartial((previous) => previous + data.text);
+        if (data.type === "status") setModelStatus(data.text);
+        if (data.type === "ready") {
+          setModelReady(true);
+          setModelLoading(false);
+          setModelStatus("Llama 3.2 is ready on this device.");
+        }
+        if (data.type === "answer") {
+          pending.current?.resolve(data.answer);
+          pending.current = null;
+        }
+        if (data.type === "error") {
+          setModelLoading(false);
+          setError(data.message);
+          pending.current?.reject(new Error(data.message));
+          pending.current = null;
+        }
+      };
+      worker.current.onerror = (event) => {
+        setModelLoading(false);
+        setError(
+          event.message || "This browser could not start the local model.",
+        );
+        pending.current?.reject(new Error("Local model unavailable."));
+        pending.current = null;
+      };
+    }
+    return worker.current;
+  }
+  function loadModel() {
+    setError("");
+    setModelLoading(true);
+    getWorker().postMessage({ type: "load" });
+  }
+  function generate(messages: { role: string; content: string }[]) {
+    return new Promise<string>((resolve, reject) => {
+      pending.current = { resolve, reject };
+      getWorker().postMessage({ type: "generate", messages });
+    });
+  }
+  function stopModel() {
+    worker.current?.terminate();
+    worker.current = null;
+    pending.current?.reject(new Error("Local generation stopped."));
+    pending.current = null;
+    setModelLoading(false);
+    setModelReady(false);
+    setModelStatus("");
+  }
+
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   async function ask(value: string) {
@@ -28,10 +101,34 @@ export function HelpPanel() {
     setQuestion("");
     setError("");
     setBusy(true);
+    setPartial("");
     const reference = helpAnswer(value);
     let answer = reference.answer;
-    let engine = "Source guide";
-    if (local && !sensitiveQuestion(value)) {
+    let engine = "Rule reference";
+    if (modelReady && !sensitiveQuestion(value)) {
+      try {
+        const referenceMessage = llamaMessages(value, reference);
+        const history = entries
+          .slice(-2)
+          .filter((entry) => !sensitiveQuestion(entry.question))
+          .flatMap((entry) => [
+            { role: "user", content: entry.question },
+            { role: "assistant", content: entry.answer },
+          ]);
+        answer = await generate([
+          referenceMessage[0],
+          ...history,
+          referenceMessage[1],
+        ]);
+        engine = "Llama 3.2 · in this browser";
+      } catch (error) {
+        setError(
+          error instanceof Error
+            ? error.message
+            : "Local model failed; showing the cited reference.",
+        );
+      }
+    } else if (local && !sensitiveQuestion(value)) {
       try {
         const result = await fetch("http://127.0.0.1:11434/api/chat", {
           method: "POST",
@@ -66,7 +163,9 @@ export function HelpPanel() {
     setBusy(false);
   }
   return (
-    <div className="assistant-widget">
+    <div
+      className={full ? "assistant-widget assistant-full" : "assistant-widget"}
+    >
       {open && (
         <section
           id="help-panel"
@@ -79,7 +178,7 @@ export function HelpPanel() {
           <header>
             <div>
               <BookOpen size={18} />
-              <strong>Ask the source guide</strong>
+              <strong>Chat with EasyVerify</strong>
             </div>
             <button
               className="icon-button"
@@ -91,25 +190,35 @@ export function HelpPanel() {
           </header>
           <div className="help-content">
             <p className="small">
-              Understand a step, find its source, or learn your way around. Keep
-              names and identity information out of chat.
+              Ask about a step, compare situations, and ask follow-up questions.
+              Keep names and identity information out of chat.
             </p>
-            {!entries.length && (
-              <div className="help-prompts">
-                {[
-                  "When is Section 2 due?",
-                  "How do I invite a new hire?",
-                  "What changes for a contractor?",
-                ].map((prompt) => (
-                  <button
-                    key={prompt}
-                    onClick={() => ask(prompt)}
-                    disabled={busy}
-                  >
-                    {prompt}
-                  </button>
-                ))}
+            {!modelReady && (
+              <div className="model-onboarding">
+                <strong>Built with Llama 3.2, inside EasyVerify.</strong>
+                <p className="small">
+                  Load Llama 3.2 on this device. The first download is about 1.3
+                  GB from Hugging Face, then the model answers in your browser
+                  without Ollama or an account. CPU inference may be slow.
+                </p>
+                <button
+                  className="button full"
+                  disabled={modelLoading}
+                  onClick={loadModel}
+                >
+                  {modelLoading ? "Loading local AI…" : "Load Llama 3.2"}
+                </button>
               </div>
+            )}
+            {modelStatus && (
+              <p role="status" className="small">
+                {modelStatus}
+              </p>
+            )}
+            {(modelLoading || modelReady) && (
+              <button className="text-button" onClick={stopModel}>
+                Stop local model
+              </button>
             )}
             <div aria-live="polite">
               {entries.map((entry, index) => (
@@ -141,7 +250,11 @@ export function HelpPanel() {
                   )}
                 </article>
               ))}
-              {busy && <p>Preparing your answer…</p>}
+              {busy && (
+                <div className="help-answer">
+                  <p>{partial || "Preparing your answer…"}</p>
+                </div>
+              )}
             </div>
             {error && (
               <p role="status" className="small">
@@ -175,7 +288,7 @@ export function HelpPanel() {
             </button>
           </form>
           <details className="help-options">
-            <summary>Local Llama 3.2</summary>
+            <summary>Advanced: desktop Ollama</summary>
             <p className="small">
               Optional: send this question and its rule reference to Ollama
               running on this computer. No workspace records are sent. Local
@@ -194,17 +307,24 @@ export function HelpPanel() {
           </details>
         </section>
       )}
-      <button
-        ref={launcher}
-        className="help-launcher"
-        aria-controls="help-panel"
-        aria-expanded={open}
-        aria-label={open ? "Close source guide" : "Ask the source guide"}
-        onClick={() => setOpen(!open)}
-      >
-        <MessageCircle size={19} />
-        <span>Ask EasyVerify</span>
-      </button>
+      {!full && (
+        <button
+          ref={launcher}
+          className="help-launcher"
+          aria-controls="help-panel"
+          aria-expanded={open}
+          aria-label={open ? "Close source guide" : "Chat with EasyVerify"}
+          onClick={() => setOpen(!open)}
+        >
+          <MessageCircle size={19} />
+          <span>Ask EasyVerify</span>
+        </button>
+      )}
     </div>
   );
+}
+
+export function HelpWidget() {
+  const pathname = usePathname();
+  return pathname === "/assistant" ? null : <HelpPanel />;
 }

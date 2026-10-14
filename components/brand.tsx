@@ -19,15 +19,14 @@ export function Header() {
       <Brand />
       <nav aria-label="Main">
         <ThemeToggle />
-        <Link href="/demo">Explore demo</Link>
+        <Link href="/plan">Hiring plan</Link>
+        <Link href="/assistant">Ask EasyVerify</Link>
         <Link href="/sources">Sources</Link>
-        <Link href="/history">History</Link>
-        <Link href="/identity-check">Face lab</Link>
         <Link href="/login" className="button secondary">
           Log in
         </Link>
-        <Link href="/register" className="button">
-          Get started
+        <Link href="/plan" className="button">
+          Start a plan
         </Link>
       </nav>
     </header>
