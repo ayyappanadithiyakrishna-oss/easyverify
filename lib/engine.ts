@@ -87,10 +87,10 @@ export function evaluate(
       ruleIds: [rule.id],
       title: rule.title,
       summary: rule.summary,
-      actions: rule.actions,
+      actions: [...rule.actions],
       jurisdictions: [rule.jurisdiction],
       role: rule.role,
-      sources: rule.sources,
+      sources: rule.sources.map((source) => ({ ...source })),
       trace: m.trace,
       result:
         m.result === null ? "unresolved" : m.result ? "matched" : "unmatched",

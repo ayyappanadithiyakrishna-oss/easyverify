@@ -5,7 +5,7 @@
 - TypeScript type check and ESLint passed.
 - Production Next.js build passed.
 - Original 8 civil-date tests passed.
-- 14 rule/validation tests and 2 callback-redirect tests passed.
+- 15 rule/validation tests and 2 callback-redirect tests passed.
 - 11 tests execute the actual migration in PostgreSQL WASM: RLS, tenant isolation, write protection, recipient-matched invitations, exactly-once redemption, role-restricted completion, profile-version guards, transaction rollback, revocation/expiry, immutable audit rows, and rate limiting.
 - Browser demo: completion survives reload; editing a profile resets its active completion count; comparison shows different FAR answers; mobile document width equals viewport width at 390px.
 - npm audit reports no vulnerabilities after dependency cleanup.

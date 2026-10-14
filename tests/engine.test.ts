@@ -154,3 +154,17 @@ test("missing rule conditions do not execute arbitrary JavaScript", () => {
   };
   assert.equal(evaluate(p, hire, [rule], now)[0].result, "unmatched");
 });
+
+test("repeated evaluation never mutates the source dataset or duplicates citations", () => {
+  const dataset = structuredClone(rules);
+  const before = JSON.stringify(dataset);
+  const first = evaluate(p, hire, dataset, now);
+  const second = evaluate(p, hire, dataset, now);
+  assert.deepEqual(second, first);
+  assert.equal(JSON.stringify(dataset), before);
+  const otherState = evaluate({ ...p, state: "AZ" }, hire, dataset, now).find(
+    (r) => r.id === "everify-case",
+  )!;
+  assert.equal(otherState.sources.length, 1);
+  assert.equal(otherState.needsReview, false);
+});
