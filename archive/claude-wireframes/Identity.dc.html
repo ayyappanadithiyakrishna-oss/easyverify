@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Identity photo check</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:Helvetica,system-ui,sans-serif;background:#ffffff;color:#000000}
+a{color:#000000;text-decoration:underline}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 32px 48px; background: #ffffff; font-family: Helvetica, system-ui, sans-serif; color: #000000; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #000000; padding-bottom: 12px">
+<b style="font-size: 20px">[APP NAME]</b>
+<span style="font-size: 16px">New hire onboarding for [BUSINESS NAME]</span>
+</div>
+<p style="margin: 0; font-size: 15px">Step 3 of 4</p>
+<h1 style="margin: 0; font-size: 30px">Identity photo check (optional)</h1>
+<div style="border: 1px solid #000000; padding: 16px; font-size: 16px; line-height: 1.5; display: flex; flex-direction: column; gap: 8px">
+<b>Before you start</b>
+<span>This compares a selfie to the photo on your ID to confirm they match. Your photos are deleted right after the check. Only the result (match / no match) is saved.</span>
+<span>You don't have to do this. If you skip it, your employer checks your documents in person like normal. Skipping will not affect your job.</span>
+<label style="display: flex; gap: 8px"><input type="checkbox"> I agree to the photo check and understand my photos will be deleted after.</label>
+</div>
+<div style="display: flex; gap: 24px">
+<div style="border: 1px solid #000000; padding: 16px; width: 400px; display: flex; flex-direction: column; gap: 10px">
+<b>1. Photo of your ID</b>
+<div style="height: 200px; border: 1px dashed #000000; display: flex; align-items: center; justify-content: center">[ID photo]</div>
+<button type="button" style="font-size: 15px; padding: 8px">Upload photo</button>
+</div>
+<div style="border: 1px solid #000000; padding: 16px; width: 400px; display: flex; flex-direction: column; gap: 10px">
+<b>2. Take a selfie</b>
+<div style="height: 200px; border: 1px dashed #000000; display: flex; align-items: center; justify-content: center">[camera preview]</div>
+<button type="button" style="font-size: 15px; padding: 8px">Take selfie</button>
+</div>
+<div style="border: 1px solid #000000; padding: 16px; width: 340px; height: fit-content; display: flex; flex-direction: column; gap: 10px; font-size: 16px">
+<b>3. Result</b>
+<span>Status: waiting for photos</span>
+<span>Result: [Match / No match / Try again]</span>
+</div>
+</div>
+<div style="display: flex; gap: 12px"><a href="Join.dc.html" style="display: inline-block; border: 1px solid #000000; padding: 10px 16px; color: #000000; text-decoration: none; font-size: 16px; background: #ffffff">Back</a><a href="Join.dc.html" style="display: inline-block; border: 1px solid #000000; padding: 10px 16px; color: #000000; text-decoration: none; font-size: 16px; background: #ffffff">Skip this step</a><a href="Join.dc.html" style="display: inline-block; border: 2px solid #000000; padding: 10px 16px; color: #000000; text-decoration: none; font-size: 16px; font-weight: bold; background: #ffffff">Run check</a></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

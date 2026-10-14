@@ -1,0 +1,125 @@
+{
+  "v": 3,
+  "attachments": {},
+  "boards": {
+    "Dashboard.dc.html": {
+      "h": 900,
+      "title": "3 Dashboard",
+      "w": 1440,
+      "x": 0,
+      "y": 1400
+    },
+    "Detail.dc.html": {
+      "h": 900,
+      "title": "4 Requirement detail",
+      "w": 1440,
+      "x": 1520,
+      "y": 1400
+    },
+    "Flow.dc.html": {
+      "h": 800,
+      "title": "0 Screen map",
+      "w": 1440,
+      "x": 0,
+      "y": -1400
+    },
+    "History.dc.html": {
+      "h": 900,
+      "title": "5 Program history",
+      "w": 1440,
+      "x": 3040,
+      "y": 1400
+    },
+    "Identity.dc.html": {
+      "h": 900,
+      "title": "8 New hire: identity check",
+      "w": 1440,
+      "x": 3040,
+      "y": 2800
+    },
+    "Invite.dc.html": {
+      "h": 900,
+      "title": "6 Invite a new hire",
+      "w": 1440,
+      "x": 0,
+      "y": 2800
+    },
+    "Join.dc.html": {
+      "h": 900,
+      "title": "7 New hire: invite link",
+      "w": 1440,
+      "x": 1520,
+      "y": 2800
+    },
+    "Main.dc.html": {
+      "h": 900,
+      "is_interactive": true,
+      "title": "1 Landing",
+      "w": 1440,
+      "x": 0,
+      "y": 0
+    },
+    "Setup.dc.html": {
+      "h": 900,
+      "title": "2 Business setup",
+      "w": 1503,
+      "x": 1692,
+      "y": 0
+    },
+    "Status.dc.html": {
+      "h": 900,
+      "title": "9 New hire status",
+      "w": 1440,
+      "x": 4560,
+      "y": 2800
+    }
+  },
+  "createdOnFiles": {
+    "at": "2026-09-23T17:00:00Z",
+    "v": 1
+  },
+  "designSystems": [],
+  "launch": {
+    "view": "canvas"
+  },
+  "notes": {
+    "app": {
+      "kind": "title1",
+      "maxW": 4480,
+      "text": "Application",
+      "w": 240,
+      "x": 0,
+      "y": 1100
+    },
+    "hires": {
+      "kind": "title1",
+      "maxW": 6000,
+      "text": "New hire onboarding",
+      "w": 240,
+      "x": 0,
+      "y": 2500
+    },
+    "onboarding": {
+      "kind": "title1",
+      "maxW": 2960,
+      "text": "Onboarding",
+      "w": 240,
+      "x": -16,
+      "y": -335
+    }
+  },
+  "order": [
+    "Main.dc.html",
+    "Setup.dc.html",
+    "Dashboard.dc.html",
+    "Detail.dc.html",
+    "History.dc.html",
+    "Flow.dc.html",
+    "Invite.dc.html",
+    "Join.dc.html",
+    "Identity.dc.html",
+    "Status.dc.html"
+  ],
+  "pages": [],
+  "title": "Compliance Compass"
+}

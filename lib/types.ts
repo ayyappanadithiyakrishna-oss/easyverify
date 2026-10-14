@@ -1,0 +1,12 @@
+export type Answer='yes'|'no'|'unknown';
+export type Profile={name:string;state:string;headcount:number;contractor:'none'|'prime'|'subcontractor'|'unknown';far:Answer;participation:Answer;calendar:'weekdays'|'sixDays'|'everyDay';closures:string[]};
+export type Business={id:string;workspace_id:string;profile:Profile;version:number};
+export type Hire={id:string;business_id:string;workspace_id:string;name:string;email:string;hire_date:string;termination_date:string|null;short_job:boolean;offer_accepted:boolean;user_id:string|null};
+export type Condition={field:keyof Profile;equals:string|number}|{all:Condition[]}|{any:Condition[]};
+export type Source={title:string;url:string;citation:string;reviewed:string|null};
+export type Rule={id:string;title:string;summary:string;actions:string[];jurisdiction:string;condition:Condition;role:'employer'|'hire';deadline:'hire'|'section2'|'case'|'retention'|'none';group?:string;restriction?:boolean;reviewOnly?:boolean;sources:Source[]};
+export type Requirement={id:string;ruleIds:string[];title:string;summary:string;actions:string[];jurisdictions:string[];role:'employer'|'hire';sources:Source[];trace:string[];result:'matched'|'unmatched'|'unresolved';needsReview:boolean;due:string|null};
+export type Confirmation={hire_id:string;requirement_id:string;completed:boolean;profile_version:number;actor_id:string;updated_at:string};
+export type Event={id:string;workspace_id:string;business_id:string|null;hire_id:string|null;description:string;created_at:string};
+export type Invite={id:string;hire_id:string;expires_at:string;revoked_at:string|null;redeemed_at:string|null};
+export type WorkspaceData={workspace:{id:string;name:string}|null;businesses:Business[];hires:Hire[];confirmations:Confirmation[];events:Event[];invites:Invite[];role:'employer'|'hire';userEmail:string;snapshots:{hire_id:string;profile_version:number;ruleset_version:string;requirements:Requirement[]}[]};

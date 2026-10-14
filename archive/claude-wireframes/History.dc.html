@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>History</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:Helvetica,system-ui,sans-serif;background:#ffffff;color:#000000}
+a{color:#000000;text-decoration:underline}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 32px 48px; background: #ffffff; font-family: Helvetica, system-ui, sans-serif; color: #000000; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #000000; padding-bottom: 12px">
+<b style="font-size: 20px">[APP NAME]</b>
+<div style="display: flex; gap: 20px; font-size: 16px"><a href="Dashboard.dc.html">My requirements</a><a href="Status.dc.html">New hires</a><a href="History.dc.html">History</a><a href="Setup.dc.html">Edit profile</a><a href="Main.dc.html">Log out</a></div>
+</div>
+<h1 style="margin: 0; font-size: 30px">Why the rules come in layers</h1>
+<p style="margin: 0; font-size: 16px; max-width: 800px; line-height: 1.5">E-Verify started as a small federal pilot. Contracts and states added their own rules over time, so one business can have federal, contract, and state rules at once.</p>
+<table style="border-collapse: collapse; width: 900px; font-size: 15px">
+<thead><tr style="text-align: left; background: #ffffff"><th style="border: 1px solid #000000; padding: 8px">Year</th><th style="border: 1px solid #000000; padding: 8px">What happened</th></tr></thead>
+<tbody>
+<tr><td style="border: 1px solid #000000; padding: 8px">1996</td><td style="border: 1px solid #000000; padding: 8px">Basic Pilot program created; legislation authored by Rep. Ken Calvert</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">2004</td><td style="border: 1px solid #000000; padding: 8px">Available to employers in all 50 states</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">2007</td><td style="border: 1px solid #000000; padding: 8px">Renamed E-Verify</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">2008</td><td style="border: 1px solid #000000; padding: 8px">Arizona requires it for all employers; executive order for federal contractors</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">2009</td><td style="border: 1px solid #000000; padding: 8px">Contractor clause (FAR 52.222-54) takes effect</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">2016</td><td style="border: 1px solid #000000; padding: 8px">California limits when employers can use it, Labor Code 2814</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">Today</td><td style="border: 1px solid #000000; padding: 8px">Voluntary for most employers; required for some by contract or state law</td></tr>
+</tbody></table>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
