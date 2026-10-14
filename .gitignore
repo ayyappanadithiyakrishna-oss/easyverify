@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+.env
+.env.*
+!.env.example
+coverage/
+*.log
+research/2026-CAC-Rules.pdf
+.next/
+.vercel/
+*.tsbuildinfo
+supabase/.temp/
+.gstack/
