@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>One requirement</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:Helvetica,system-ui,sans-serif;background:#ffffff;color:#000000}
+a{color:#000000;text-decoration:underline}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 32px 48px; background: #ffffff; font-family: Helvetica, system-ui, sans-serif; color: #000000; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #000000; padding-bottom: 12px">
+<b style="font-size: 20px">[APP NAME]</b>
+<div style="display: flex; gap: 20px; font-size: 16px"><a href="Dashboard.dc.html">My requirements</a><a href="Status.dc.html">New hires</a><a href="History.dc.html">History</a><a href="Setup.dc.html">Edit profile</a><a href="Main.dc.html">Log out</a></div>
+</div>
+<a href="Dashboard.dc.html" style="font-size: 15px">← Back to my requirements</a>
+<h1 style="margin: 0; font-size: 28px">E-Verify each new hire, only after the job offer is accepted</h1>
+<p style="margin: 0; font-size: 15px; color: #000000">Federal + California (2 rules combined)</p>
+<div style="display: flex; gap: 32px">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 16px; font-size: 16px; line-height: 1.5">
+<div><h2 style="margin: 0 0 6px; font-size: 20px">What it means</h2><p style="margin: 0">Your federal subcontract requires E-Verify for new hires. California does not allow E-Verify checks before a job offer. So: check after the offer is accepted and the I-9 is done.</p></div>
+<div><h2 style="margin: 0 0 6px; font-size: 20px">Why it applies to you</h2>
+<ul style="margin: 0; padding-left: 22px"><li>Federal subcontract: yes</li><li>E-Verify clause in contract: yes</li><li>State: California</li></ul></div>
+<div><h2 style="margin: 0 0 6px; font-size: 20px">What to do</h2>
+<ol style="margin: 0; padding-left: 22px"><li>Job offer accepted</li><li>Complete Form I-9</li><li>Create the E-Verify case</li><li>Give the employee any E-Verify notice</li></ol></div>
+<div><h2 style="margin: 0 0 6px; font-size: 20px">Sources</h2><p style="margin: 0">FAR 52.222-54 · CA Labor Code 2814</p></div>
+</div>
+<div style="border: 1px solid #000000; padding: 16px; width: 300px; height: fit-content; display: flex; flex-direction: column; gap: 10px; font-size: 16px">
+<b>Deadline</b><span>3 business days after start date</span>
+<b>New hire</b><span>[NAME], started Mon Sep 21, due Thu Sep 24</span>
+<b>Status</b><span>Not done</span>
+<button type="button" style="font-size: 16px; padding: 8px">Mark as done</button>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

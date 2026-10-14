@@ -1,0 +1,18 @@
+export function safeNext(value: string | null, fallback = "/workspace") {
+  if (
+    !value ||
+    !value.startsWith("/") ||
+    value.startsWith("//") ||
+    /[\\\u0000-\u0020]/.test(value)
+  )
+    return fallback;
+  try {
+    const base = "https://easyverify.invalid";
+    const next = new URL(value, base);
+    return next.origin === base
+      ? next.pathname + next.search + next.hash
+      : fallback;
+  } catch {
+    return fallback;
+  }
+}

@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New hire status</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:Helvetica,system-ui,sans-serif;background:#ffffff;color:#000000}
+a{color:#000000;text-decoration:underline}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 32px 48px; background: #ffffff; font-family: Helvetica, system-ui, sans-serif; color: #000000; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #000000; padding-bottom: 12px">
+<b style="font-size: 20px">[APP NAME]</b>
+<div style="display: flex; gap: 20px; font-size: 16px"><a href="Dashboard.dc.html">My requirements</a><a href="Status.dc.html">New hires</a><a href="History.dc.html">History</a><a href="Setup.dc.html">Edit profile</a><a href="Main.dc.html">Log out</a></div>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: flex-end">
+<div><h1 style="margin: 0; font-size: 30px">New hires</h1><p style="margin: 6px 0 0; font-size: 16px">Track each new hire's paperwork.</p></div>
+<a href="Invite.dc.html" style="display: inline-block; border: 2px solid #000000; padding: 10px 16px; color: #000000; text-decoration: none; font-size: 16px; font-weight: bold; background: #ffffff">+ Invite a new hire</a>
+</div>
+<table style="border-collapse: collapse; width: 700px; font-size: 15px">
+<thead><tr style="text-align: left"><th style="border: 1px solid #000000; padding: 8px">Name</th><th style="border: 1px solid #000000; padding: 8px">Start date</th><th style="border: 1px solid #000000; padding: 8px">Progress</th></tr></thead>
+<tbody>
+<tr><td style="border: 1px solid #000000; padding: 8px"><b>[NAME 1]</b> (selected)</td><td style="border: 1px solid #000000; padding: 8px">Mon Sep 21</td><td style="border: 1px solid #000000; padding: 8px">3 of 6 steps</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">[NAME 2]</td><td style="border: 1px solid #000000; padding: 8px">Mon Oct 5</td><td style="border: 1px solid #000000; padding: 8px">Invite sent, not opened</td></tr>
+</tbody></table>
+<h2 style="margin: 8px 0 0; font-size: 22px">[NAME 1]: steps</h2>
+<table style="border-collapse: collapse; width: 100%; font-size: 15px">
+<thead><tr style="text-align: left"><th style="border: 1px solid #000000; padding: 8px">Step</th><th style="border: 1px solid #000000; padding: 8px">Who</th><th style="border: 1px solid #000000; padding: 8px">Status</th><th style="border: 1px solid #000000; padding: 8px">Date</th></tr></thead>
+<tbody>
+<tr><td style="border: 1px solid #000000; padding: 8px">Offer accepted</td><td style="border: 1px solid #000000; padding: 8px">Employer</td><td style="border: 1px solid #000000; padding: 8px">Done</td><td style="border: 1px solid #000000; padding: 8px">Sep 18</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">Form I-9 Section 1</td><td style="border: 1px solid #000000; padding: 8px">New hire</td><td style="border: 1px solid #000000; padding: 8px">Done</td><td style="border: 1px solid #000000; padding: 8px">Sep 21</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">Identity photo check</td><td style="border: 1px solid #000000; padding: 8px">New hire</td><td style="border: 1px solid #000000; padding: 8px">Done (match)</td><td style="border: 1px solid #000000; padding: 8px">Sep 21</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">Form I-9 Section 2 (see documents)</td><td style="border: 1px solid #000000; padding: 8px">Employer</td><td style="border: 1px solid #000000; padding: 8px"><b>Not done</b></td><td style="border: 1px solid #000000; padding: 8px">Due Thu Sep 24</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">Create E-Verify case</td><td style="border: 1px solid #000000; padding: 8px">Employer</td><td style="border: 1px solid #000000; padding: 8px"><b>Not done</b></td><td style="border: 1px solid #000000; padding: 8px">Due Thu Sep 24</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px">Give new hire any E-Verify notice</td><td style="border: 1px solid #000000; padding: 8px">Employer</td><td style="border: 1px solid #000000; padding: 8px">Only if one comes</td><td style="border: 1px solid #000000; padding: 8px">-</td></tr>
+</tbody></table>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

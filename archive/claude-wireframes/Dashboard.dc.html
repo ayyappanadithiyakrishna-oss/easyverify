@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>My requirements</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:Helvetica,system-ui,sans-serif;background:#ffffff;color:#000000}
+a{color:#000000;text-decoration:underline}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 32px 48px; background: #ffffff; font-family: Helvetica, system-ui, sans-serif; color: #000000; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #000000; padding-bottom: 12px">
+<b style="font-size: 20px">[APP NAME]</b>
+<div style="display: flex; gap: 20px; font-size: 16px"><a href="Dashboard.dc.html">My requirements</a><a href="Status.dc.html">New hires</a><a href="History.dc.html">History</a><a href="Setup.dc.html">Edit profile</a><a href="Main.dc.html">Log out</a></div>
+</div>
+<h1 style="margin: 0; font-size: 30px">My requirements</h1>
+<p style="margin: 0; font-size: 16px">California · 18 employees · federal subcontractor (<a href="Setup.dc.html">edit</a>)</p>
+<div style="display: flex; gap: 20px">
+<div style="border: 1px solid #000000; padding: 16px; width: 260px"><b>Progress</b><p style="margin: 8px 0 4px; font-size: 22px">3 of 8 done</p><div style="height: 12px; border: 1px solid #000000"><div style="width: 37%; height: 12px; background: #000000"></div></div></div>
+<div style="border: 1px solid #000000; padding: 16px; width: 260px"><b>Due this week</b><p style="margin: 8px 0 0; font-size: 22px">2</p></div>
+<div style="border: 1px solid #000000; padding: 16px; width: 260px"><b>Federal + CA overlap</b><p style="margin: 8px 0 0; font-size: 22px">2</p></div>
+</div>
+<table style="border-collapse: collapse; width: 100%; font-size: 15px">
+<thead><tr style="text-align: left; background: #ffffff"><th style="border: 1px solid #000000; padding: 8px">Done</th><th style="border: 1px solid #000000; padding: 8px">Requirement</th><th style="border: 1px solid #000000; padding: 8px">Source</th><th style="border: 1px solid #000000; padding: 8px">When</th></tr></thead>
+<tbody>
+<tr><td style="border: 1px solid #000000; padding: 8px"><input type="checkbox"  aria-label="Done"></td><td style="border: 1px solid #000000; padding: 8px"><a href="Detail.dc.html">E-Verify each new hire, only after the job offer is accepted</a></td><td style="border: 1px solid #000000; padding: 8px">Federal + CA</td><td style="border: 1px solid #000000; padding: 8px">Due Thu Sep 24</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px"><input type="checkbox"  aria-label="Done"></td><td style="border: 1px solid #000000; padding: 8px">Finish I-9 Section 2 for new hire</td><td style="border: 1px solid #000000; padding: 8px">Federal</td><td style="border: 1px solid #000000; padding: 8px">Due Thu Sep 24</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px"><input type="checkbox"  aria-label="Done"></td><td style="border: 1px solid #000000; padding: 8px">Verify existing staff assigned to the contract</td><td style="border: 1px solid #000000; padding: 8px">Federal</td><td style="border: 1px solid #000000; padding: 8px">Per contract clause</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px"><input type="checkbox"  aria-label="Done"></td><td style="border: 1px solid #000000; padding: 8px">Give employees their E-Verify case notices</td><td style="border: 1px solid #000000; padding: 8px">California</td><td style="border: 1px solid #000000; padding: 8px">When a notice comes</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px"><input type="checkbox"  aria-label="Done"></td><td style="border: 1px solid #000000; padding: 8px">Tell staff about any I-9 inspection</td><td style="border: 1px solid #000000; padding: 8px">California</td><td style="border: 1px solid #000000; padding: 8px">Within 72 hours</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px"><input type="checkbox" checked aria-label="Done"></td><td style="border: 1px solid #000000; padding: 8px">Put up E-Verify posters</td><td style="border: 1px solid #000000; padding: 8px">Federal</td><td style="border: 1px solid #000000; padding: 8px">Done</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px"><input type="checkbox" checked aria-label="Done"></td><td style="border: 1px solid #000000; padding: 8px">Form I-9 for every hire</td><td style="border: 1px solid #000000; padding: 8px">Federal</td><td style="border: 1px solid #000000; padding: 8px">Done</td></tr>
+<tr><td style="border: 1px solid #000000; padding: 8px"><input type="checkbox" checked aria-label="Done"></td><td style="border: 1px solid #000000; padding: 8px">Keep I-9s (3 yrs after hire or 1 yr after they leave)</td><td style="border: 1px solid #000000; padding: 8px">Federal</td><td style="border: 1px solid #000000; padding: 8px">Done</td></tr>
+</tbody></table>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

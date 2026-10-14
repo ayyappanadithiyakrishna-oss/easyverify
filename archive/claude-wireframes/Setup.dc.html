@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Setup form</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<style>
+body{margin:0;font-family:Helvetica,system-ui,sans-serif;background:#ffffff;color:#000000}
+a{color:#000000;text-decoration:underline}a:hover{color:#000000}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; padding: 32px 48px; background: #ffffff; font-family: Helvetica, system-ui, sans-serif; color: #000000; display: flex; flex-direction: column; gap: 20px">
+<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #000000; padding-bottom: 12px">
+<b style="font-size: 20px">[APP NAME]</b>
+<div style="display: flex; gap: 20px; font-size: 16px"><a href="Main.dc.html">Home</a><a href="Dashboard.dc.html">My requirements</a><a href="History.dc.html">History</a><a href="Setup.dc.html">Edit profile</a></div>
+</div>
+<h1 style="margin: 0; font-size: 30px">About your business</h1>
+<p style="margin: 0; font-size: 16px; color: #000000">Step 1 of 2</p>
+<div style="border: 1px solid #000000; padding: 16px; width: 640px; display: flex; flex-direction: column; gap: 18px; font-size: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="st">State where your employees work</label><select id="st" style="width: 260px; font-size: 16px"><option>California</option><option>Arizona</option><option>Georgia</option></select></div>
+<div style="display: flex; flex-direction: column; gap: 6px"><label for="n">Number of employees</label><input id="n" type="number" value="18" style="width: 120px; font-size: 16px"></div>
+<fieldset style="border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px"><legend style="margin-bottom: 6px">Do you have a federal contract or subcontract?</legend>
+<label><input type="radio" name="f"> Yes, prime contractor</label><label><input type="radio" name="f" checked> Yes, subcontractor</label><label><input type="radio" name="f"> No</label></fieldset>
+<fieldset style="border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px"><legend style="margin-bottom: 6px">Does the contract have the E-Verify clause (FAR 52.222-54)?</legend>
+<label><input type="radio" name="c" checked> Yes</label><label><input type="radio" name="c"> No</label><label><input type="radio" name="c"> Not sure</label></fieldset>
+<fieldset style="border: 0; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px"><legend style="margin-bottom: 6px">Do you use E-Verify now?</legend>
+<label><input type="radio" name="e" checked> Yes</label><label><input type="radio" name="e"> No</label><label><input type="radio" name="e"> Not sure yet</label></fieldset>
+</div>
+<div style="display: flex; gap: 12px"><a href="Main.dc.html" style="border: 1px solid #000000; padding: 8px 14px; color: #000000; text-decoration: none">Back</a><a href="Dashboard.dc.html" style="border: 1px solid #000000; background: #ffffff; padding: 8px 14px; color: #000000; text-decoration: none">Show my requirements</a></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

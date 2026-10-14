@@ -45,7 +45,7 @@ Google and Microsoft login are deliberately absent until those providers are con
 
 ## Test evidence and limits
 
-The suite includes 8 original date tests, 14 rule/validation tests, and 11 database tests. The database tests execute the actual migration in an isolated PostgreSQL WASM instance using test auth identities. They verify RLS, permissions, recipient matching, one-time redemption, expiration/revocation, role-specific completion, stale versions, atomic rollback, audit immutability, and rate limits. These are meaningful database checks, but are not a substitute for live Supabase Auth/email/PostgREST verification.
+The suite includes 8 original date tests, 15 rule/validation tests, and 11 database tests. The database tests execute the actual migration in an isolated PostgreSQL WASM instance using test auth identities. They verify RLS, permissions, recipient matching, one-time redemption, expiration/revocation, role-specific completion, stale versions, atomic rollback, audit immutability, and rate limits. These are meaningful database checks, but are not a substitute for live Supabase Auth/email/PostgREST verification.
 
 California Labor Code §§2814 and 90.2 were blocked by the official site's security verification. These records remain explicitly unverified review items. Federal contractor exceptions also remain review tasks. Other states are outside state-law coverage. No unresolved legal record is treated as verified.
 
