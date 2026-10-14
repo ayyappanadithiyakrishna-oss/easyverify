@@ -38,3 +38,13 @@ Deployment URLs and final GitHub CI results will be appended after deployment ch
 - Final production demo renders without console errors; the 390px layout has no horizontal document overflow. The reviewed preview shows the explicit baseline trace and all six verified historical milestones.
 - The production account endpoint returns HTTP 503 with “Account services are not configured.” Registration is disabled with an explanatory message. This is the actual remaining external dependency, not a verified live backend.
 - Vercel Git linking failed for the private repository; the current release was deployed from an immutable Git archive. No automatic Git deployment is claimed.
+
+
+## October 14 redesign and local tools
+
+- Local type checks, lint, 41 tests (prior 37 plus four source-guide tests), production build, and npm production audit pass.
+- Browser checks: theme toggles and persists between public/workspace routes; 390px mobile has no horizontal overflow; source-guide answer includes the Section 2 official citation; local Llama 3.2:3b generated an answer through Ollama.
+- Face lab: a repeated library demonstration photo produced 100/100 similarity, a workspace screenshot produced a zero-face rejection, and clearing removed previews/result. These are functional smoke tests, not biometric accuracy/fairness or liveness validation. Network inspection showed local model/library loads and no photo-upload requests.
+- Ollama 0.40.4 installed; localhost-only user service running, model llama3.2:3b downloaded. Existing models preserved. Public visitors need their own local Ollama or use the source guide.
+- Google OAuth is code-complete behind a disabled flag, not provider-tested or enabled. The requested Supabase organization remains inaccessible, so live accounts remain unavailable.
+- Preview/production release results follow after deployment.

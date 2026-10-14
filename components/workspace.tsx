@@ -18,7 +18,9 @@ import {
   Check,
   Search,
   GitCompareArrows,
+  ScanFace,
 } from "lucide-react";
+import { ThemeToggle } from "./theme-toggle";
 import { Brand } from "./brand";
 import { browserClient } from "@/lib/supabase";
 import { makeDemo, demoKey } from "@/lib/demo";
@@ -480,6 +482,10 @@ export function Workspace({
                 {label}
               </button>
             ))}
+          <Link href="/identity-check">
+            <ScanFace size={18} />
+            Optional face lab
+          </Link>
           <Link href="/sources">
             <BookOpen size={18} />
             Sources & coverage
@@ -515,6 +521,7 @@ export function Workspace({
                 : "Business workspace"}
           </span>
           <div>
+            <ThemeToggle />
             {demo && (
               <button
                 className="text-button"

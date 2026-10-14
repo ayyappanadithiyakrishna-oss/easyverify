@@ -70,6 +70,31 @@ export default function Page() {
             </p>
           </div>
         </section>
+        <section id="local-assistant" className="panel">
+          <h2>Use Llama 3.2 on this computer</h2>
+          <p>
+            The source guide works for every visitor. Optional Llama answers run
+            through your own local Ollama service; Vercel does not host the
+            model.
+          </p>
+          <p>
+            Install Ollama, pull <code>llama3.2:3b</code>, and start its server
+            with the EasyVerify origin allowed. Your browser may request
+            local-network access. Keep the server bound to localhost.
+          </p>
+          <pre>
+            <code>
+              OLLAMA_ORIGINS=https://easyverify.vercel.app
+              OLLAMA_HOST=127.0.0.1:11434 ollama serve
+            </code>
+          </pre>
+          <p>
+            Open Ask EasyVerify → Local Llama 3.2 and select “Use this
+            computer’s Ollama.” Only your question and the selected rule
+            reference are sent. Answers can be incorrect; read the source-guide
+            reference and linked official sources.
+          </p>
+        </section>
       </main>
     </>
   );
