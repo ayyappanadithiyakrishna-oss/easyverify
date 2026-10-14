@@ -14,3 +14,5 @@ Before submitting, each student should be able to explain their own implementati
 ## Full implementation update
 
 After the initial build-kit request, Sat authorized Codex to build the full app. Codex generated the Next.js interface, TypeScript rules engine, validation, Supabase auth integration, API handlers, SQL schema/RLS/transaction functions, sample workspace, tests, and deployment configuration. Earlier wording describing AI code as limited to the date helper no longer describes the full repository. Any submission must disclose the full extent of assistance.
+
+October 14: Codex reviewed the supplied Cursor DESIGN.md, preserved Claude source conversation, and official CAC rules/graphics; implemented the warm light/dark visual system, persistent theme controls, improved landing page, source-guide chat, local Ollama adapter, optional on-device photo comparison, and gated Google OAuth handler. Codex installed Ollama and downloaded Llama 3.2:3b on the user's Mac. Human/TFJS and third-party models are credited in the repository. These are AI implementation contributions and must not be described as student-written code.

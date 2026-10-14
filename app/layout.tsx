@@ -1,3 +1,4 @@
+import { HelpPanel } from "@/components/help-panel";
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
@@ -15,12 +16,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('easyverify-theme');document.documentElement.dataset.theme=t==='light'||t==='dark'?t:matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}catch(e){document.documentElement.dataset.theme=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'}})()`,
+          }}
+        />
+      </head>
       <body>
         <a className="skip" href="#main">
           Skip to content
         </a>
         {children}
+        <HelpPanel />
         <footer className="site-footer">
           <span>EasyVerify · Compliance Compass</span>
           <span>

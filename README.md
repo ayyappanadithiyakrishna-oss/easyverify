@@ -58,3 +58,15 @@ Product history and screen references were recovered from the authoritative Opus
 This implementation was generated with OpenAI Codex. Claude previously assisted with concept and wireframes. `submission/CONTRIBUTIONS.md` records the assistance accurately. The Congressional App Challenge requires significant student technical contributions and full AI disclosure; this repository does not establish eligibility by itself.
 
 See `submission/TEACHER-REVIEW.md`, `research/SOURCES.md`, and `submission/DRAFTS.md` for review instructions, source limits, and contest preparation.
+
+## October 14 design and feature update
+
+The supplied Cursor reference is preserved in DESIGN.md, with project purpose in PRODUCT.md. ThemeToggle persists a light/dark choice under `easyverify-theme`; the initial theme follows the OS and is applied before paint. All workspace forms, reports, and public pages share the same theme tokens. Printed reports use light colors.
+
+Ask EasyVerify is a source guide with citations, optional local Llama 3.2:3b answers, and no server-side chat storage. On this Mac, Ollama 0.40.4 is installed in `/Applications/Ollama.app`; the model has been downloaded and a localhost-only user LaunchAgent starts its service at login. `scripts/start-ollama-mac.sh` also starts it manually. The public website's local model option requires Ollama on the visitor's own computer and browser local-network permission; it is not a cloud-hosted Llama endpoint. No public tunnel or paid model API was created.
+
+The optional `/identity-check` lab compares two consented photos entirely in the browser. Human 3.3.6 and model assets load only after comparison is requested. No worker-document processing, persistent face database, pass/fail classification, liveness claim, or onboarding mutation is implemented. Model credits and licenses are under public/models and public/vendor.
+
+Google OAuth is implemented through Supabase `signInWithOAuth` and the existing PKCE callback. `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED` remains false until the correct Supabase project, Google OAuth credentials, allowed redirects, and end-to-end callback are configured and tested. This update does not resolve the inaccessible EasyVerify organization.
+
+See research/IMPROVEMENT-REVIEW.md for the Claude/rubric review, feature boundaries, and priorities. The teacher package records AI contributions; this full implementation does not establish contest eligibility.

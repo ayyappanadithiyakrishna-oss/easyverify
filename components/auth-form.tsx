@@ -95,6 +95,37 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "reset" }) {
           <Link href="/demo">explore the demo</Link>.
         </div>
       )}
+      {mode !== "reset" &&
+        configured() &&
+        process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED === "true" && (
+          <button
+            className="button secondary full"
+            disabled={busy}
+            onClick={async () => {
+              setBusy(true);
+              setMessage("");
+              try {
+                const next = safeNext(params.get("next"));
+                const { error } = await browserClient().auth.signInWithOAuth({
+                  provider: "google",
+                  options: {
+                    redirectTo: `${location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+                  },
+                });
+                if (error) throw error;
+              } catch (error) {
+                setMessage(
+                  error instanceof Error
+                    ? error.message
+                    : "Google sign-in could not start.",
+                );
+                setBusy(false);
+              }
+            }}
+          >
+            Continue with Google
+          </button>
+        )}
       <form onSubmit={submit}>
         {!recovery && (
           <label>

@@ -14,11 +14,12 @@ export default function Home() {
       <main id="main">
         <section className="hero">
           <div>
-            <span className="eyebrow">FOR INLAND EMPIRE SMALL BUSINESSES</span>
+            <span className="eyebrow">
+              Made for small businesses in the Inland Empire
+            </span>
             <h1>
-              Know the rules.
-              <br />
-              See your next step.
+              A new hire.
+              <br />A clearer next step.
             </h1>
             <p className="hero-description">
               Federal requirements, California restrictions, and contract
@@ -27,7 +28,7 @@ export default function Home() {
             </p>
             <div className="actions">
               <Link href="/register" className="button">
-                Set up your business <ArrowRight size={17} />
+                Build your checklist <ArrowRight size={17} />
               </Link>
               <Link href="/demo" className="button secondary">
                 Try the working demo
@@ -106,6 +107,37 @@ export default function Home() {
             </p>
           </div>
         </section>
+        <section className="landing-evidence">
+          <div>
+            <h2>
+              See the rule.
+              <br />
+              Follow the reasoning.
+            </h2>
+            <p>
+              Change a business from an ordinary California employer to a
+              federal subcontractor. See which steps stay the same, which need
+              review, and the exact inputs behind each decision.
+            </p>
+            <Link href="/demo" className="button secondary">
+              Compare the two businesses <ArrowRight size={16} />
+            </Link>
+          </div>
+          <img
+            className="preview-light"
+            src="/workspace-preview.png"
+            alt="EasyVerify sample workspace showing responsibilities and upcoming targets"
+            width="1440"
+            height="1000"
+          />
+          <img
+            className="preview-dark"
+            src="/workspace-preview-dark.png"
+            alt="EasyVerify sample workspace showing responsibilities and upcoming targets"
+            width="1440"
+            height="1000"
+          />
+        </section>
         <section className="closing">
           <CalendarDays size={30} />
           <div>
@@ -116,6 +148,29 @@ export default function Home() {
             Explore two business profiles <ArrowRight size={16} />
           </Link>
         </section>
+        <aside className="contest-note">
+          <a
+            href="https://www.congressionalappchallenge.us/"
+            aria-label="Congressional App Challenge website"
+          >
+            <img
+              src="/cac-logo.png"
+              alt="Congressional App Challenge"
+              width="150"
+              height="70"
+            />
+          </a>
+          <div>
+            <strong>
+              A project prepared for the Congressional App Challenge
+            </strong>
+            <p>
+              Built around a local problem: helping Inland Empire businesses
+              understand employment-verification steps. Independent student
+              project; no government endorsement or E-Verify connection.
+            </p>
+          </div>
+        </aside>
       </main>
     </>
   );
