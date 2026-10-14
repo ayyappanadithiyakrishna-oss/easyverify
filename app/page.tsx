@@ -2,8 +2,9 @@ import Link from "next/link";
 import {
   ArrowRight,
   Check,
+  ArrowUpRight,
   FileCheck2,
-  Layers,
+  ShieldCheck,
   CalendarDays,
 } from "lucide-react";
 import { Header } from "@/components/brand";
@@ -11,166 +12,202 @@ export default function Home() {
   return (
     <>
       <Header />
-      <main id="main">
-        <section className="hero">
-          <div>
-            <span className="eyebrow">
-              Made for small businesses in the Inland Empire
-            </span>
+      <main id="main" className="new-landing">
+        <section className="launch-hero">
+          <div className="launch-copy">
+            <p className="launch-intro">
+              <span className="live-dot" />
+              Hiring guidance, with the reasoning attached.
+            </p>
             <h1>
-              A new hire.
-              <br />A clearer next step.
+              Hire with a<br />
+              <em>clear next step.</em>
             </h1>
-            <p className="hero-description">
-              Federal requirements, California restrictions, and contract
-              obligations can overlap. EasyVerify turns that complexity into a
-              checklist you can understand.
+            <p className="launch-description">
+              A first day, a stack of paperwork, and overlapping rules. Turn
+              what you know about your business into a practical hiring plan.
             </p>
             <div className="actions">
-              <Link href="/register" className="button">
-                Build your checklist <ArrowRight size={17} />
+              <Link href="/plan" className="button mint">
+                Build your hiring plan <ArrowRight size={18} />
               </Link>
-              <Link href="/demo" className="button secondary">
-                Try the working demo
-              </Link>
-            </div>
-            <p className="small">
-              Built around official sources. Every requirement has a reason.
-            </p>
-          </div>
-          <div className="hero-preview">
-            <div className="preview-top">
-              <span>MY REQUIREMENTS</span>
-              <span className="badge">California</span>
-            </div>
-            <h2>A clear path for every hire.</h2>
-            <div className="preview-row">
-              <Check size={19} />
-              <div>
-                <strong>Complete Form I-9 · Section 1</strong>
-                <small>Employee · first day of paid work</small>
-              </div>
-            </div>
-            <div className="preview-row">
-              <FileCheck2 size={19} />
-              <div>
-                <strong>Review documents · Section 2</strong>
-                <small>Employer · business-day target</small>
-              </div>
-            </div>
-            <div className="preview-row">
-              <Layers size={19} />
-              <div>
-                <strong>Review your contract clause</strong>
-                <small>Why it applies: FAR E-Verify clause</small>
-              </div>
-            </div>
-            <div className="preview-note">
-              <span>Federal + state layers</span>
-              <Link href="/demo">
-                See the reasoning <ArrowRight size={15} />
+              <Link href="/demo" className="hero-text-link">
+                Explore the workspace <ArrowUpRight size={17} />
               </Link>
             </div>
-          </div>
-        </section>
-        <section className="how">
-          <div className="section-heading">
-            <span className="eyebrow">HOW IT WORKS</span>
-            <h2>
-              From your business
-              <br />
-              to a practical checklist.
-            </h2>
-          </div>
-          <div className="feature">
-            <span className="step">01</span>
-            <h3>Tell us about your business</h3>
-            <p>
-              Work location, employee count, contract status, and E-Verify
-              participation.
+            <p className="launch-footnote">
+              No account needed to start. No employee documents required.
             </p>
           </div>
-          <div className="feature">
-            <span className="step">02</span>
-            <h3>Understand what applies</h3>
-            <p>
-              See the source, the matching inputs, and where a requirement needs
-              further review.
-            </p>
-          </div>
-          <div className="feature">
-            <span className="step">03</span>
-            <h3>Keep every hire on track</h3>
-            <p>
-              Invite new hires, organize responsibilities, and track reported
-              completion.
-            </p>
-          </div>
-        </section>
-        <section className="landing-evidence">
-          <div>
-            <h2>
-              See the rule.
-              <br />
-              Follow the reasoning.
-            </h2>
-            <p>
-              Change a business from an ordinary California employer to a
-              federal subcontractor. See which steps stay the same, which need
-              review, and the exact inputs behind each decision.
-            </p>
-            <Link href="/demo" className="button secondary">
-              Compare the two businesses <ArrowRight size={16} />
+          <div className="hire-path" aria-label="Example of a hiring plan">
+            <div className="path-heading">
+              <span>THE NEXT HIRE</span>
+              <span className="path-status">Plan, explain, act</span>
+            </div>
+            <div className="path-line">
+              <span className="path-node">
+                <Check size={17} />
+              </span>
+              <div>
+                <small>Before the first day</small>
+                <h3>Offer accepted</h3>
+                <p>Start the plan once the offer is accepted.</p>
+              </div>
+            </div>
+            <div className="path-line">
+              <span className="path-node active">
+                <FileCheck2 size={19} />
+              </span>
+              <div>
+                <small>New hire · first paid day</small>
+                <h3>Complete Section 1</h3>
+                <p>The person joining completes their attestation.</p>
+                <span className="source-chip">
+                  USCIS · source attached <ArrowUpRight size={12} />
+                </span>
+              </div>
+            </div>
+            <div className="path-line">
+              <span className="path-node">
+                <CalendarDays size={18} />
+              </span>
+              <div>
+                <small>Employer · working-calendar target</small>
+                <h3>Review acceptable documents</h3>
+                <p>See your date, your responsibilities, and why they apply.</p>
+              </div>
+            </div>
+            <Link href="/plan" className="path-bottom">
+              Make the dates yours <ArrowRight size={17} />
             </Link>
           </div>
-          <img
-            className="preview-light"
-            src="/workspace-preview.png"
-            alt="EasyVerify sample workspace showing responsibilities and upcoming targets"
-            width="1440"
-            height="1000"
-          />
-          <img
-            className="preview-dark"
-            src="/workspace-preview-dark.png"
-            alt="EasyVerify sample workspace showing responsibilities and upcoming targets"
-            width="1440"
-            height="1000"
-          />
         </section>
-        <section className="closing">
-          <CalendarDays size={30} />
+        <section className="useful-strip">
+          <span>
+            <ShieldCheck size={18} />
+            Official sources beside every step
+          </span>
+          <span>
+            <CalendarDays size={18} />
+            Your calendar, your targets
+          </span>
+          <span>
+            <FileCheck2 size={18} />
+            Unknown answers stay visible
+          </span>
+        </section>
+        <section className="product-story">
           <div>
-            <h2>Less guessing. More clarity.</h2>
-            <p>A focused workspace for hiring steps, dates, and decisions.</p>
+            <p className="story-label">
+              A useful plan beats another search result.
+            </p>
+            <h2>
+              Know what applies.
+              <br />
+              See what needs review.
+            </h2>
+            <p>
+              Federal requirements, state restrictions, and contract clauses can
+              overlap. EasyVerify shows the facts that matched, the source
+              behind each step, and the questions that still need an answer.
+            </p>
+            <Link href="/plan" className="inline-action">
+              Start with your business <ArrowRight size={17} />
+            </Link>
           </div>
-          <Link href="/demo" className="button secondary">
-            Explore two business profiles <ArrowRight size={16} />
+          <div className="story-product">
+            <img
+              className="preview-light"
+              src="/workspace-preview.png"
+              alt="EasyVerify workspace displaying requirement targets and reasons"
+              width="1440"
+              height="1000"
+              loading="lazy"
+            />
+            <img
+              className="preview-dark"
+              src="/workspace-preview-dark.png"
+              alt="EasyVerify dark workspace displaying requirement targets and reasons"
+              width="1440"
+              height="1000"
+              loading="lazy"
+            />
+          </div>
+        </section>
+        <section className="capability-list">
+          <div>
+            <h2>
+              Made to move
+              <br />
+              the work forward.
+            </h2>
+            <p>For the person hiring and the person joining.</p>
+          </div>
+          <div>
+            <article>
+              <span>01</span>
+              <div>
+                <h3>Build and share a plan</h3>
+                <p>
+                  Use your work location, contract answers, and start date. Open
+                  the same plan on another laptop with a link.
+                </p>
+              </div>
+              <Link href="/plan" aria-label="Build a shareable plan">
+                <ArrowUpRight size={22} />
+              </Link>
+            </article>
+            <article>
+              <span>02</span>
+              <div>
+                <h3>Ask a follow-up, in the app</h3>
+                <p>
+                  Choose fast local chat or Llama 3.2 inside your browser. Read
+                  the rule reference beside the answer.
+                </p>
+              </div>
+              <Link href="/assistant" aria-label="Open EasyVerify chat">
+                <ArrowUpRight size={22} />
+              </Link>
+            </article>
+            <article>
+              <span>03</span>
+              <div>
+                <h3>Understand the difference</h3>
+                <p>
+                  Compare an ordinary employer and a federal contractor. See the
+                  inputs that change the guidance.
+                </p>
+              </div>
+              <Link href="/demo" aria-label="Compare business profiles">
+                <ArrowUpRight size={22} />
+              </Link>
+            </article>
+          </div>
+        </section>
+        <section className="launch-cta">
+          <h2>
+            The next hire can start
+            <br />
+            with a clearer plan.
+          </h2>
+          <Link href="/plan" className="button mint">
+            Build my plan <ArrowRight size={17} />
           </Link>
         </section>
-        <aside className="contest-note">
+        <div className="coverage-foot">
+          <p>
+            Federal baseline across the United States. California references are
+            included with explicit review status; other state requirements still
+            need research.
+          </p>
           <a
             href="https://www.congressionalappchallenge.us/"
-            aria-label="Congressional App Challenge website"
+            className="contest-link"
           >
-            <img
-              src="/cac-logo.png"
-              alt="Congressional App Challenge"
-              width="150"
-              height="70"
-            />
+            2026 Congressional App Challenge <ArrowUpRight size={15} />
           </a>
-          <div>
-            <strong>
-              A project prepared for the Congressional App Challenge
-            </strong>
-            <p>
-              Built around a local problem: helping Inland Empire businesses
-              understand employment-verification steps. Independent student
-              project; no government endorsement or E-Verify connection.
-            </p>
-          </div>
-        </aside>
+        </div>
       </main>
     </>
   );

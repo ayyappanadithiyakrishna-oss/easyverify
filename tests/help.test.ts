@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { helpAnswer, llamaMessages } from "../lib/help";
+import { helpAnswer, llamaMessages, groundedAnswer } from "../lib/help";
 const now = new Date("2026-10-14T12:00:00Z");
 test("source guide links employer section two to its actual citation", () => {
   const result = helpAnswer("When is Section 2 due?", now);
@@ -31,5 +31,47 @@ test("sensitive-information requests are excluded from model context", () => {
   assert.match(
     llamaMessages("Section 1", helpAnswer("Section 1", now))[0].content,
     /ONLY/,
+  );
+});
+
+test("unrelated model output cannot be presented as cited guidance", () => {
+  const reference = helpAnswer("Section 1", now).answer;
+  assert.equal(
+    groundedAnswer(
+      "A typical working day in Brussels. Cafes serve breakfast.",
+      reference,
+    ),
+    false,
+  );
+  assert.equal(
+    groundedAnswer(
+      "The employee completes Section 1 on the first day of paid work.",
+      reference,
+    ),
+    true,
+  );
+  assert.equal(
+    groundedAnswer(
+      "The employee completes Section 1 after 99 days of paid work.",
+      reference,
+    ),
+    false,
+  );
+});
+
+test("model cannot reverse an employee completion obligation", () => {
+  assert.equal(
+    groundedAnswer(
+      "The employee does not complete Section 1 on the first day of paid work.",
+      helpAnswer("Section 1", now).answer,
+    ),
+    false,
+  );
+  assert.equal(
+    groundedAnswer(
+      "Review Section 2 within 3 business days after paid work begins.",
+      helpAnswer("Section 2", now).answer,
+    ),
+    true,
   );
 });

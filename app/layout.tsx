@@ -1,4 +1,4 @@
-import { HelpPanel } from "@/components/help-panel";
+import { HelpWidget } from "@/components/help-panel";
 import type { Metadata } from "next";
 import "./globals.css";
 export const metadata: Metadata = {
@@ -29,7 +29,7 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
-        <HelpPanel />
+        <HelpWidget />
         <footer className="site-footer">
           <span>EasyVerify · Compliance Compass</span>
           <span>

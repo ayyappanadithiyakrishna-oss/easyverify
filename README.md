@@ -70,3 +70,17 @@ The optional `/identity-check` lab compares two consented photos entirely in the
 Google OAuth is implemented through Supabase `signInWithOAuth` and the existing PKCE callback. `NEXT_PUBLIC_GOOGLE_AUTH_ENABLED` remains false until the correct Supabase project, Google OAuth credentials, allowed redirects, and end-to-end callback are configured and tested. This update does not resolve the inaccessible EasyVerify organization.
 
 See research/IMPROVEMENT-REVIEW.md for the Claude/rubric review, feature boundaries, and priorities. The teacher package records AI contributions; this full implementation does not establish contest eligibility.
+
+## Public release: open it from another laptop
+
+The repository is PUBLIC. The hosted site, `/plan`, and `/assistant` are public and require no GitHub account. The planner can recreate a plan on another device through a validated share link. Names/employee records are excluded; checklist completion remains a session-local report, not synchronized account data.
+
+The browser chatbot is actual local Llama 3.2 inference, using Transformers.js 4.3.1, ONNX Runtime, and the pinned ONNX Community 1B q4 model. It downloads approximately 1.69 GB after the visitor chooses Load Llama 3.2. It runs in a Worker with WebAssembly and does not require Ollama or a hosted inference API. Browser memory/storage limits and CPU speed affect usability; the rules reference remains available. npm run build:worker generates the worker, and prebuild runs it automatically. npm run dev requires npm run build:worker first on a fresh checkout.
+
+The optional desktop Ollama adapter is retained under Advanced. The old CAC image was replaced with a discreet official-site text link, and the public design uses an ink-blue hiring sequence and mint actions.
+
+Alternative hosting configuration is included: Dockerfile for standalone Next.js, render.yaml for a free Render service, and port 7860 compatibility for Docker Hugging Face Spaces. Neither alternate host has been provisioned; their accounts are not connected. See research/HOSTING.md for limits. The Supabase EasyVerify organization/Google OAuth credentials are still unavailable, so those live account services remain unconfigured.
+
+The default local model is now HuggingFaceTB/SmolLM2-135M-Instruct (about 137 MB), with Llama 3.2 q4 available as the larger option. Both are real local inference. The browser's model-cache quota in QA was about 930 MB, so the larger Llama file could not be cached there. A conservative relevance/numeric guard rejects clearly unsupported output and shows the original reference; it is not legal validation.
+
+From a generated plan, Ask about this plan opens chat with the validated public inputs. Context and dates come from the rules engine, not model arithmetic. Each conversation entry preserves its own original reference so later profile edits cannot silently change the explanation behind an older answer.
