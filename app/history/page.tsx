@@ -61,6 +61,60 @@ export default function Page() {
           </div>
         </section>
         <section className="panel">
+          <h2>From Form I-9 to E-Verify</h2>
+          {[
+            [
+              "1986",
+              "Employer document review",
+              "The Immigration Reform and Control Act established the employer verification framework that led to Form I-9.",
+            ],
+            [
+              "1996",
+              "Pilot programs authorized",
+              "Congress required three pilot approaches to electronic employment verification, including Basic Pilot.",
+            ],
+            [
+              "1997",
+              "Basic Pilot launched",
+              "INS and SSA introduced the voluntary program in six states, including California.",
+            ],
+            [
+              "2004",
+              "Web access introduced",
+              "Employers gained internet-based access, online enrollment, and reporting.",
+            ],
+            [
+              "2007",
+              "Renamed E-Verify",
+              "The program added features including photo matching and checks intended to reduce entry errors.",
+            ],
+            [
+              "2024",
+              "E-Verify+ trial",
+              "USCIS began a trial intended to streamline Form I-9 and E-Verify together.",
+            ],
+          ].map(([year, title, description]) => (
+            <article className="history-layer" key={year}>
+              <span className="step">{year}</span>
+              <div>
+                <h3>{title}</h3>
+                <p>{description}</p>
+              </div>
+            </article>
+          ))}
+          <p className="small">
+            Historical milestones describe the program’s development; they do
+            not decide which current rules apply to your business.
+          </p>
+          <a
+            href="https://www.e-verify.gov/about-e-verify/history-and-milestones"
+            target="_blank"
+            rel="noreferrer"
+          >
+            Source: E-Verify · History and milestones ↗
+          </a>
+        </section>
+        <section className="panel">
           <h2>Explore the program’s history</h2>
           <p>
             Read the official timeline for the development of the Basic Pilot
