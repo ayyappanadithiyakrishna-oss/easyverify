@@ -218,7 +218,18 @@ export function PublicPlanner() {
               <button
                 className="icon-button"
                 aria-label="Print hiring plan"
-                onClick={() => window.print()}
+                onClick={() => {
+                  const closed = Array.from(
+                    document.querySelectorAll<HTMLDetailsElement>(
+                      ".plan-step:not([open])",
+                    ),
+                  );
+                  closed.forEach((detail) => (detail.open = true));
+                  requestAnimationFrame(() => {
+                    window.print();
+                    closed.forEach((detail) => (detail.open = false));
+                  });
+                }}
               >
                 <Printer size={18} />
               </button>
