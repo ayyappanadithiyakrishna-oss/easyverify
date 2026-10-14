@@ -11,3 +11,4 @@ research/2026-CAC-Rules.pdf
 *.tsbuildinfo
 supabase/.temp/
 .gstack/
+.vercel
