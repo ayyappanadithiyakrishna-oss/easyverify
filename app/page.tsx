@@ -162,8 +162,8 @@ export default function Home() {
               <div>
                 <h3>Ask a follow-up, in the app</h3>
                 <p>
-                  Load Llama 3.2 inside your browser for a local conversation.
-                  Read the rule reference beside the answer.
+                  Choose fast local chat or Llama 3.2 inside your browser. Read
+                  the rule reference beside the answer.
                 </p>
               </div>
               <Link href="/assistant" aria-label="Open EasyVerify chat">

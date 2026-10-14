@@ -7,36 +7,44 @@ env.backends.onnx.wasm.wasmPaths = "/vendor/onnx/";
 let generator = null;
 let busy = false;
 self.onmessage = async (event) => {
-  const { type, messages } = event.data;
+  const { type, messages, model = "fast" } = event.data;
+  const choice =
+    model === "llama"
+      ? {
+          id: "onnx-community/Llama-3.2-1B-Instruct-ONNX",
+          revision: "14007543b6dc92de88daf96a9aa85d2f95ace6ef",
+          dtype: "q4",
+        }
+      : {
+          id: "HuggingFaceTB/SmolLM2-135M-Instruct",
+          revision: "12fd25f77366fa6b3b4b768ec3050bf629380bac",
+          dtype: "q8",
+        };
   if (busy) return;
   busy = true;
   try {
     if (!generator) {
       self.postMessage({
         type: "status",
-        text: "Downloading Llama 3.2 to this browser…",
+        text: "Downloading the model to this browser…",
       });
-      generator = await pipeline(
-        "text-generation",
-        "onnx-community/Llama-3.2-1B-Instruct-ONNX",
-        {
-          revision: "14007543b6dc92de88daf96a9aa85d2f95ace6ef",
-          dtype: "q8",
-          device: "wasm",
-          progress_callback: (progress) => {
-            if (progress.status === "done" && progress.file?.endsWith(".onnx"))
-              self.postMessage({
-                type: "status",
-                text: "Initializing Llama on this device. First startup can take a minute…",
-              });
-            if (progress.status === "progress")
-              self.postMessage({
-                type: "status",
-                text: `Loading ${progress.file}: ${Math.round(progress.progress || 0)}%`,
-              });
-          },
+      generator = await pipeline("text-generation", choice.id, {
+        revision: choice.revision,
+        dtype: choice.dtype,
+        device: "wasm",
+        progress_callback: (progress) => {
+          if (progress.status === "done" && progress.file?.endsWith(".onnx"))
+            self.postMessage({
+              type: "status",
+              text: "Initializing the model on this device. First startup can take a minute…",
+            });
+          if (progress.status === "progress")
+            self.postMessage({
+              type: "status",
+              text: `Loading ${progress.file}: ${Math.round(progress.progress || 0)}%`,
+            });
         },
-      );
+      });
       self.postMessage({ type: "ready" });
     }
     if (type === "generate") {

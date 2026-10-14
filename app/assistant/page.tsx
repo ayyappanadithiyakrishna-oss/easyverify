@@ -6,7 +6,7 @@ export default function Assistant() {
       <Header />
       <main id="main" className="assistant-page">
         <div className="assistant-intro">
-          <span className="badge">On-device Llama 3.2</span>
+          <span className="badge">On-device AI chat</span>
           <h1>
             A conversation.
             <br />A clearer next step.
@@ -17,10 +17,10 @@ export default function Assistant() {
             account required.
           </p>
           <p className="small">
-            The first model download is about 1.3 GB and requires a capable
-            browser with enough memory. AI answers can be wrong; check their
-            rule references. Keep identity details and employee documents out of
-            chat.
+            Choose a smaller 137 MB model or Llama 3.2 (about 1.7 GB) and
+            requires a capable browser with enough memory. AI answers can be
+            wrong; check their rule references. Keep identity details and
+            employee documents out of chat.
           </p>
         </div>
         <HelpPanel full />

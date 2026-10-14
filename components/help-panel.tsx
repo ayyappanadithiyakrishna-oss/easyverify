@@ -6,6 +6,7 @@ import {
   helpAnswer,
   llamaMessages,
   sensitiveQuestion,
+  groundedAnswer,
   type HelpAnswer,
 } from "@/lib/help";
 type Entry = HelpAnswer & { question: string; engine: string };
@@ -22,6 +23,8 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
   const [question, setQuestion] = useState("");
   const [entries, setEntries] = useState<Entry[]>([]);
   const [local, setLocal] = useState(false);
+  const [modelChoice, setModelChoice] = useState("fast");
+  const modelName = modelChoice === "llama" ? "Llama 3.2" : "SmolLM2";
   const [modelReady, setModelReady] = useState(false);
   const [modelLoading, setModelLoading] = useState(false);
   const [modelStatus, setModelStatus] = useState("");
@@ -49,7 +52,7 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
         if (data.type === "ready") {
           setModelReady(true);
           setModelLoading(false);
-          setModelStatus("Llama 3.2 is ready on this device.");
+          setModelStatus(`${modelName} is ready on this device.`);
         }
         if (data.type === "answer") {
           pending.current?.resolve(data.answer);
@@ -76,12 +79,16 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
   function loadModel() {
     setError("");
     setModelLoading(true);
-    getWorker().postMessage({ type: "load" });
+    getWorker().postMessage({ type: "load", model: modelChoice });
   }
   function generate(messages: { role: string; content: string }[]) {
     return new Promise<string>((resolve, reject) => {
       pending.current = { resolve, reject };
-      getWorker().postMessage({ type: "generate", messages });
+      getWorker().postMessage({
+        type: "generate",
+        messages,
+        model: modelChoice,
+      });
     });
   }
   function stopModel() {
@@ -120,8 +127,14 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
           ...history,
           referenceMessage[1],
         ]);
-        engine = "Llama 3.2 · in this browser";
+        if (!groundedAnswer(answer, reference.answer))
+          throw new Error(
+            "The model’s answer did not match the rule reference. Showing the reference instead.",
+          );
+        engine = `${modelName} · in this browser`;
       } catch (error) {
+        answer = reference.answer;
+        setPartial("");
         setError(
           error instanceof Error
             ? error.message
@@ -195,18 +208,34 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
             </p>
             {!modelReady && (
               <div className="model-onboarding">
-                <strong>Built with Llama 3.2, inside EasyVerify.</strong>
+                <strong>A local chatbot, inside EasyVerify.</strong>
+                <label>
+                  Model
+                  <select
+                    value={modelChoice}
+                    disabled={modelLoading}
+                    onChange={(e) => {
+                      stopModel();
+                      setModelChoice(e.target.value);
+                    }}
+                  >
+                    <option value="fast">Fast local chat · SmolLM2</option>
+                    <option value="llama">Llama 3.2 · larger model</option>
+                  </select>
+                </label>
                 <p className="small">
-                  Load Llama 3.2 on this device. The first download is about 1.3
-                  GB from Hugging Face, then the model answers in your browser
-                  without Ollama or an account. CPU inference may be slow.
+                  {modelChoice === "llama"
+                    ? "Built with Llama 3.2. About 1.7 GB to download; startup and CPU answers can be slow."
+                    : "A smaller instruction model, about 137 MB to download, for more accessible local chat."}{" "}
+                  Answers run in this browser, without Ollama or an account.
+                  Your browser may cache the model if storage permits.
                 </p>
                 <button
                   className="button full"
                   disabled={modelLoading}
                   onClick={loadModel}
                 >
-                  {modelLoading ? "Loading local AI…" : "Load Llama 3.2"}
+                  {modelLoading ? "Loading local AI…" : `Load ${modelName}`}
                 </button>
               </div>
             )}
@@ -214,6 +243,19 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
               <p role="status" className="small">
                 {modelStatus}
               </p>
+            )}
+            {entries.length > 0 && (
+              <button
+                className="text-button"
+                disabled={busy}
+                onClick={() => {
+                  setEntries([]);
+                  setError("");
+                  setPartial("");
+                }}
+              >
+                New conversation
+              </button>
             )}
             {(modelLoading || modelReady) && (
               <button className="text-button" onClick={stopModel}>
@@ -242,7 +284,7 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
                       ))}
                     </ul>
                   )}
-                  {entry.engine.startsWith("Llama") && (
+                  {/Llama|SmolLM2/.test(entry.engine) && (
                     <details>
                       <summary>Read the source-guide reference</summary>
                       <p>{helpAnswer(entry.question).answer}</p>
@@ -252,7 +294,11 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
               ))}
               {busy && (
                 <div className="help-answer">
-                  <p>{partial || "Preparing your answer…"}</p>
+                  <p>
+                    {partial
+                      ? "The local model is drafting an answer…"
+                      : "Preparing your answer…"}
+                  </p>
                 </div>
               )}
             </div>

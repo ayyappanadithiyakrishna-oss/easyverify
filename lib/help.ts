@@ -95,3 +95,26 @@ export function llamaMessages(question: string, answer: HelpAnswer) {
     },
   ];
 }
+
+const ignored = new Set(
+  "the a an and or to of in is are be can will should with your you this that it its on for as by from no not only have has after before do does at if when what who".split(
+    " ",
+  ),
+);
+export function groundedAnswer(answer: string, reference: string) {
+  const tokens = (text: string) =>
+    new Set(
+      (text.toLowerCase().match(/[a-z0-9]+/g) || []).filter(
+        (token) => token.length > 2 && !ignored.has(token),
+      ),
+    );
+  const a = tokens(answer),
+    r = tokens(reference);
+  const overlap = [...a].filter((token) => r.has(token)).length;
+  const numbers = answer.match(/\b\d+\b/g) || [];
+  const sourceNumbers = new Set(reference.match(/\b\d+\b/g) || []);
+  return (
+    overlap >= Math.min(3, r.size) &&
+    numbers.every((number) => sourceNumbers.has(number))
+  );
+}
