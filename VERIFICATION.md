@@ -76,3 +76,14 @@ The q8 Llama test generated an unrelated Brussels story. A smaller SmolLM2 model
 Final suite is 45 tests (including unrelated-output, numeric, and employee-obligation polarity guards). Backend/Supabase/Google account verification remains blocked.
 
 The final positive-reference prompt produced an actual local SmolLM2 answer: “The employee completes Section 1 on the first day of paid work after accepting the offer.” This passed the topical/numeric/polarity guard, and the original official-source reference remained expanded. Chat can now use validated public-plan inputs and evaluated calendar targets, with per-message references preserved. A closure-date context test verifies the October 23 target. Final test count: 46.
+
+
+### Published public release
+
+PR #4 merged after both CI checks passed for b9d2deaa6a15b2fa535a2696833568f5d1b65df9; merge commit 0070c2468493e0cee13b0bdb8f9977d3e64978c7. Reviewed preview dpl_68Wxq2tSp9aDLK29GbMgMztGBj7z; production dpl_C8m7uvMs9X1KknxmqNffdHKc69Dy READY and aliased to https://easyverify.vercel.app.
+
+Production planner recreates eight requirements from its share link after reload, has no 390px overflow, and the AI worker is served with HTTP 200. Production SmolLM2 downloaded, initialized, and generated the tested Section 1 answer with the original reference expanded. Hosted plan-context generation also exercised the consistency failure path and correctly showed the evaluated October 22 rule reference instead of unsupported model output. AI usefulness remains limited; these are functional tests, not a legal accuracy guarantee.
+
+The API account endpoint still returns 503. Supabase/Google signup, login, invitations, and cross-device account saves remain unconfigured. A final browser-auth attempt found no default Chrome cookie database and stopped at a Brave Safe Storage macOS Keychain permission gate; no existing authenticated dashboard session was available. No Supabase project or Google provider was provisioned. Render/Hugging Face deployment configuration remains prepared, not deployed.
+
+Fresh local development now generates the worker automatically through predev; this script-only handoff update does not change deployed production behavior.

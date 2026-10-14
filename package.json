@@ -12,7 +12,8 @@
     "lint": "eslint app components lib proxy.ts",
     "check": "npm run typecheck && npm run lint && npm test",
     "build:worker": "esbuild workers/llama.js --bundle --format=esm --platform=browser --outfile=public/llama-worker.js",
-    "prebuild": "npm run build:worker"
+    "prebuild": "npm run build:worker",
+    "predev": "npm run build:worker"
   },
   "engines": {
     "node": "24.x"
