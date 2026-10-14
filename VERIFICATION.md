@@ -24,8 +24,17 @@ Deployment URLs and final GitHub CI results will be appended after deployment ch
 
 - Repository: https://github.com/ayyappanadithiyakrishna-oss/easyverify (private).
 - Implementation PR #1 was merged after GitHub CI passed for reviewed commit `80d132db47d2745f04cec63bf601a0f55f3bee5a`.
-- Public domain: https://easyverify-ayyappanadithiyakrishna-9205s-projects.vercel.app
-- Hosted demo: https://easyverify-ayyappanadithiyakrishna-9205s-projects.vercel.app/demo
+- Public domain: https://easyverify.vercel.app
+- Hosted demo: https://easyverify.vercel.app/demo
 - Production deployment `dpl_X6JYNfr7XDsmPxr3oRorKt1YtdFB` reached READY. Hosted demo rendered, completion persisted after reload, and there were no browser console errors during the smoke test.
 - The private repository could not be connected for automatic Vercel Git deployments; deployment was performed directly from a frozen Git archive. Future Git pushes alone will not deploy until repository access is granted to Vercel.
 - A subsequent delivery refinement adds an explicit baseline explanation and a verified program timeline. It will be deployed and checked separately; the original production check above is preserved as evidence.
+
+## Final release
+
+- Delivery PR #2 passed GitHub CI for reviewed source commit `796457e669aeebde08da357bb2f94014e8ebad33` and was merged into main.
+- Final production deployment: `dpl_21cGxCUeUn7MX96dibwCZLCuy3VR`, status READY; https://easyverify.vercel.app.
+- Final suite: 37 passing tests (8 dates, 16 engine/validation, 11 database, 2 callback redirects).
+- Final production demo renders without console errors; the 390px layout has no horizontal document overflow. The reviewed preview shows the explicit baseline trace and all six verified historical milestones.
+- The production account endpoint returns HTTP 503 with “Account services are not configured.” Registration is disabled with an explanatory message. This is the actual remaining external dependency, not a verified live backend.
+- Vercel Git linking failed for the private repository; the current release was deployed from an immutable Git archive. No automatic Git deployment is claimed.

@@ -1,5 +1,7 @@
 # EasyVerify — Compliance Compass
 
+Public site: https://easyverify.vercel.app · Working demo: https://easyverify.vercel.app/demo
+
 Employment-verification guidance and onboarding tracking for Inland Empire small businesses. Next.js 16.4, React 19.3, TypeScript, and Supabase.
 
 ## Run locally
