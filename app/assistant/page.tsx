@@ -17,10 +17,10 @@ export default function Assistant() {
             account required.
           </p>
           <p className="small">
-            Choose a smaller 137 MB model or Llama 3.2 (about 1.7 GB) and
-            requires a capable browser with enough memory. AI answers can be
-            wrong; check their rule references. Keep identity details and
-            employee documents out of chat.
+            Choose fast local chat (137 MB) or Llama 3.2 (1.7 GB). This requires
+            a capable browser with enough memory. AI answers can be wrong; check
+            their rule references. Keep identity details and employee documents
+            out of chat.
           </p>
         </div>
         <HelpPanel full />
