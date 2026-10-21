@@ -35,8 +35,8 @@ export default function RootLayout({
           <p>
             Informational guidance, not legal advice. Completion is
             self-reported and is not a certification. Federal baseline for the
-            United States; California references carry an explicit review
-            status.
+            United States, with state guidance and explicit coverage gaps.
+            State, local, and contract exceptions may require review.
           </p>
           <nav aria-label="Footer">
             <a href="/sources">Sources &amp; coverage</a>

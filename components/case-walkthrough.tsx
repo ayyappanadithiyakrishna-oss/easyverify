@@ -1,4 +1,5 @@
 "use client";
+import { StateRequirements } from "@/components/state-requirements";
 import { useState } from "react";
 import * as Tabs from "@radix-ui/react-tabs";
 import {
@@ -32,6 +33,7 @@ export function CaseWalkthrough() {
 
   return (
     <>
+      <StateRequirements />
       <section className="case-due" aria-labelledby="due-heading">
         <h2 id="due-heading">When is the case due?</h2>
         <label htmlFor="case-start">First day of paid work</label>
@@ -44,15 +46,17 @@ export function CaseWalkthrough() {
         <p className="case-due-answer" role="status">
           {due ? (
             <>
-              Create the case by <strong>{formatDate(due)}</strong>.
+              Ordinary enrolled-employer target:{" "}
+              <strong>{formatDate(due)}</strong>.
             </>
           ) : (
             "Choose a valid date."
           )}
         </p>
         <p className="small">
-          Weekdays only, not counting company closures. Never before the offer
-          is accepted and Form I-9 is complete.
+          Monday–Friday calendar with no closure dates entered.
+          Contractor-specific timelines require separate review. Never before
+          the offer is accepted and Form I-9 is complete.
         </p>
       </section>
 

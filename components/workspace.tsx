@@ -1,4 +1,5 @@
 "use client";
+import { stateCoverage } from "@/lib/state-laws";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
@@ -661,11 +662,9 @@ export function Workspace({
               the employer to save the business profile again.
             </div>
           )}
-          {business && business.profile.state !== "CA" && (
+          {business && (
             <div className="callout">
-              State-specific rules for {business.profile.state} are outside this
-              release. The federal checklist does not establish state
-              compliance.
+              {stateCoverage(business.profile.state)}
             </div>
           )}
           {view === "dashboard" && (

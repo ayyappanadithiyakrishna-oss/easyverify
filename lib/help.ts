@@ -1,3 +1,5 @@
+import { stateNames } from "./state-laws";
+import { states } from "./validation";
 import { rules } from "./rules";
 export type HelpAnswer = {
   answer: string;
@@ -16,7 +18,10 @@ const topics: [RegExp, string[]][] = [
   ],
   [/retention|retain|keep|termination|records/i, ["i9-retention"]],
   [/contract|far|subcontract/i, ["contractor"]],
-  [/california|2814|90\.2|inspection/i, ["ca-prescreen", "ca-inspection"]],
+  [
+    /california|\bCA\b|2814|90\.2|inspection/i,
+    ["ca-prescreen", "ca-inspection"],
+  ],
   [/e.verify|enroll|participat/i, ["everify-case", "participation"]],
 ];
 export function helpAnswer(question: string, now = new Date()): HelpAnswer {
@@ -44,6 +49,28 @@ export function helpAnswer(question: string, now = new Date()): HelpAnswer {
         "The optional face-comparison lab compares two consented photos on your device. It cannot establish identity, liveness, work authorization, or I-9 completion. It never completes onboarding tasks.",
       sources: [],
     };
+  const state =
+    Object.entries(stateNames)
+      .sort((a, b) => b[1].length - a[1].length)
+      .find(([, name]) =>
+        new RegExp(`\\b${name}\\b`, "i").test(question),
+      )?.[0] ??
+    states.find((code) => new RegExp(`\\b${code}\\b`).test(question));
+  if (state && state !== "CA") {
+    const rule = rules.find(
+      (rule) => rule.id === `state-${state.toLowerCase()}`,
+    )!;
+    const stale = rule.sources.some(
+      (source) =>
+        !source.reviewed ||
+        now.getTime() - new Date(source.reviewed + "T00:00:00Z").getTime() >
+          90 * 86400000,
+    );
+    return {
+      answer: `${rule.title}: ${rule.summary} ${rule.actions.join(" ")} Applicability needs review.${stale ? " Source verification is pending or expired." : ""}`,
+      sources: rule.sources,
+    };
+  }
   const ids = [
     ...new Set(
       topics
@@ -55,7 +82,7 @@ export function helpAnswer(question: string, now = new Date()): HelpAnswer {
   if (!matches.length)
     return {
       answer:
-        "I can help with Section 1, employer document review, retention dates, E-Verify participation, contractor review, California source coverage, and invitations. Try “When is Section 2 due?” For an individual hire’s target, open their requirement in the workspace.",
+        "I can help with Section 1, employer document review, retention dates, E-Verify participation, contractor review, state-specific E-Verify requirements, and invitations. Try “When is Section 2 due?” For an individual hire’s target, open their requirement in the workspace.",
       sources: [],
     };
   return {

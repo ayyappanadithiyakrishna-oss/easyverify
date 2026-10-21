@@ -31,3 +31,17 @@ The latest Claude `.dc.html` screen files were subsequently found inside the vau
 ## Program history verified
 
 Read the official E-Verify History and Milestones page (https://www.e-verify.gov/about-e-verify/history-and-milestones), last updated March 10, 2025. Verified the 1986 employer-review framework, 1996 pilot authorization, 1997 six-state Basic Pilot launch, 2004 web access, 2007 E-Verify name/photo-matching changes, and 2024 E-Verify+ trial. The historical timeline is separate from current legal applicability and does not make unverified authorship claims.
+
+## State-law expansion — October 20, 2026
+
+Primary pages read through the gstack browser. Summaries live in `lib/state-laws.ts` and generate explicit review tasks in every selected state. Source review is separate from a determination that a particular employer is covered.
+
+- Arizona: https://www.azleg.gov/ars/23/00214.htm — §23-214(A) post-hire E-Verify and record retention (employment duration or at least three years, longer period); (B) economic-development incentives.
+- Florida: https://www.leg.state.fl.us/Statutes/index.cfm?App_mode=Display_Statute&URL=0400-0499/0448/Sections/0448.095.html — §448.095 definitions, 25-or-more private-employer threshold, public agencies/contracts, three-business-day timing, outage evidence, three-year records, first annual return certification. The page displayed the 2026 statutes.
+- North Carolina: https://www.ncleg.gov/EnactedLegislation/Statutes/HTML/ByArticle/Chapter_64/Article_2.html — §§64-25–26, 25-or-more in-state employees, employee term shorter than nine months excluded, employment-plus-one-year records. Government bodies excluded from this Article are not universally exempt from other laws.
+- South Carolina: https://www.scstatehouse.gov/code/t41c008.php — §§41-8-10 and 41-8-20, covered private employers and three-business-day use, including early departures; contractor contact record duty. Federal tentative-nonconfirmation protections must remain intact.
+- Virginia: https://law.lis.virginia.gov/vacode/title2.2/chapter43/section2.2-4308.2/ — average of more than 50 employees over prior 12 months AND Commonwealth-agency contract exceeding $50,000; covered newly hired employees on that contract. No inference from a current headcount or federal contractor status.
+
+California Legislature §2814 continued to return a security-verification page (403). Existing California statutory references retain null review dates. Tennessee candidate URLs returned 404 or 403, and Georgia candidates returned 404/500; no legal claims for these states were marked reviewed. Other states and DC receive a state/local-law research task and an explicitly unreviewed government-directory reference. This expansion does not assert exhaustive 50-state legal coverage.
+
+All new state applicability items are review-only because the stored profile does not establish statutory employee definitions, in-state counts, employer category, public-contract value, seasonal exclusions, or local obligations. They never auto-enroll a business or mark an official government step complete. Ruleset bumped to 2026-10-20.1 so persisted snapshots must regenerate.

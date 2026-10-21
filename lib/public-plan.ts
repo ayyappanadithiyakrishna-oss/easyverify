@@ -1,3 +1,4 @@
+import { stateNames } from "./state-laws";
 import { evaluate } from "./engine";
 import { rules } from "./rules";
 import { z } from "zod";
@@ -58,23 +59,33 @@ export function planReference(question: string, plan: PublicPlan) {
   const results = evaluate(plan.profile, planHire(plan), rules).filter(
     (requirement) => requirement.result !== "unmatched",
   );
+  const stateQuestion =
+    /state|local|enroll|law/i.test(question) ||
+    Object.values(stateNames).some((name) =>
+      new RegExp(`\\b${name}\\b`, "i").test(question),
+    );
   const selected = results
     .filter((requirement) =>
-      /section\s*1/i.test(question)
-        ? requirement.id === "i9-section1"
-        : /section\s*2|documents/i.test(question)
-          ? requirement.id === "i9-section2"
-          : /retention|keep/i.test(question)
-            ? requirement.id === "i9-retention"
-            : /contract|far/i.test(question)
-              ? requirement.ruleIds.includes("contractor")
-              : /e.verify/i.test(question)
-                ? requirement.ruleIds.some((id) =>
-                    ["everify-case", "participation", "contractor"].includes(
-                      id,
-                    ),
-                  )
-                : true,
+      /state|local|enroll|florida|arizona|carolina|california|law/i.test(
+        question,
+      )
+        ? requirement.id.startsWith("state-") ||
+          requirement.ruleIds.some((id) => id.startsWith("ca-"))
+        : /section\s*1/i.test(question)
+          ? requirement.id === "i9-section1"
+          : /section\s*2|documents/i.test(question)
+            ? requirement.id === "i9-section2"
+            : /retention|keep/i.test(question)
+              ? requirement.id === "i9-retention"
+              : /contract|far/i.test(question)
+                ? requirement.ruleIds.includes("contractor")
+                : /e.verify/i.test(question)
+                  ? requirement.ruleIds.some((id) =>
+                      ["everify-case", "participation", "contractor"].includes(
+                        id,
+                      ),
+                    )
+                  : true,
     )
     .slice(0, 3);
   return {

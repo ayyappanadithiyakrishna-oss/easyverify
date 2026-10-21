@@ -1,4 +1,5 @@
 import type { Rule, Source, Condition } from "./types";
+import { stateRules } from "./state-laws";
 const source = (
   title: string,
   url: string,
@@ -9,6 +10,7 @@ const always: Condition = { all: [] };
 const participation = { field: "participation", equals: "yes" } as const;
 const ca = { field: "state", equals: "CA" } as const;
 export const rules: Rule[] = [
+  ...stateRules,
   {
     id: "i9-section1",
     title: "Complete Form I-9 · Section 1",

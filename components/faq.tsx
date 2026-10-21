@@ -9,7 +9,7 @@ const items = [
   },
   {
     q: "Which states are covered?",
-    a: "The federal baseline applies nationwide. California references are included with an explicit review status. Other states still need research.",
+    a: "The federal baseline applies nationwide. Arizona, Florida, North Carolina, South Carolina, and Virginia have source-reviewed state guidance. California references and other states retain explicit review tasks. State guidance is not a complete determination of your legal obligations.",
   },
   {
     q: "Do I need to upload employee documents?",

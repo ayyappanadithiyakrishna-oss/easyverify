@@ -13,14 +13,13 @@ export default function Assistant() {
           </h1>
           <p>
             Ask about a hiring step, compare situations, and follow up. The AI
-            runs on this laptop, inside your browser. No Ollama installation or
-            account required.
+            runs on your device, inside your browser. No account required.
           </p>
           <p className="small">
-            Choose fast local chat (137 MB) or Llama 3.2 (1.7 GB). This requires
-            a capable browser with enough memory. AI answers can be wrong; check
-            their rule references. Keep identity details and employee documents
-            out of chat.
+            Optional chat downloads a model to your device and requires enough
+            memory and storage. You can use source-linked guidance without it.
+            AI answers can be wrong; check their rule references. Keep identity
+            details and employee documents out of chat.
           </p>
         </div>
         <HelpPanel full />

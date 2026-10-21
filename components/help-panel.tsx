@@ -39,9 +39,9 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
     return () => window.removeEventListener("easyverify-plan", update);
   }, []);
   const [entries, setEntries] = useState<Entry[]>([]);
-  const [local, setLocal] = useState(false);
   const [modelChoice, setModelChoice] = useState("fast");
-  const modelName = modelChoice === "llama" ? "Llama 3.2" : "SmolLM2";
+  const modelName =
+    modelChoice === "llama" ? "Extended local chat" : "Fast local chat";
   const [modelReady, setModelReady] = useState(false);
   const [modelLoading, setModelLoading] = useState(false);
   const [modelStatus, setModelStatus] = useState("");
@@ -165,36 +165,6 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
             : "Local model failed; showing the cited reference.",
         );
       }
-    } else if (local && !sensitiveQuestion(value)) {
-      try {
-        const result = await fetch("http://127.0.0.1:11434/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            model: "llama3.2:3b",
-            messages: llamaMessages(value, reference),
-            stream: false,
-            options: { temperature: 0, num_predict: 200, num_ctx: 2048 },
-          }),
-          signal: AbortSignal.timeout(90000),
-        });
-        if (!result.ok) throw new Error("Ollama could not answer.");
-        const data = await result.json();
-        if (
-          typeof data.message?.content !== "string" ||
-          !data.message.content.trim()
-        )
-          throw new Error("Ollama returned an empty answer.");
-        answer = data.message.content.slice(0, 3000);
-        if (!groundedAnswer(answer, reference.answer))
-          throw new Error("Ollama answer did not match the rule reference.");
-        engine = "Llama 3.2 · this computer";
-      } catch {
-        answer = reference.answer;
-        setError(
-          "Ollama was unavailable or its answer did not match the reference. It must be running with the EasyVerify origin allowed and browser local-network permission. Showing the rule reference instead.",
-        );
-      }
     }
     setEntries((previous) => [
       ...previous.slice(-5),
@@ -258,16 +228,20 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
                       setModelChoice(e.target.value);
                     }}
                   >
-                    <option value="fast">Fast local chat · SmolLM2</option>
-                    <option value="llama">Llama 3.2 · larger model</option>
+                    <option value="fast">
+                      Fast local chat · smaller download
+                    </option>
+                    <option value="llama">
+                      Extended local chat · larger download
+                    </option>
                   </select>
                 </label>
                 <p className="small">
                   {modelChoice === "llama"
-                    ? "Built with Llama 3.2. About 1.7 GB to download; startup and CPU answers can be slow."
+                    ? "About 1.7 GB to download; startup and answers can be slow."
                     : "A smaller instruction model, about 137 MB to download, for more accessible local chat."}{" "}
-                  Answers run in this browser, without Ollama or an account.
-                  Your browser may cache the model if storage permits.
+                  Answers run in this browser, without an account. Your browser
+                  may cache the model if storage permits.
                 </p>
                 <button
                   className="button full"
@@ -323,7 +297,7 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
                       ))}
                     </ul>
                   )}
-                  {/Llama|SmolLM2/.test(entry.engine) && (
+                  {entry.engine !== "Rule reference" && (
                     <details open>
                       <summary>
                         Rule reference · check the AI explanation
@@ -374,24 +348,6 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
               <ArrowUp size={19} />
             </button>
           </form>
-          <details className="help-options">
-            <summary>Advanced: desktop Ollama</summary>
-            <p className="small">
-              Optional: send this question and its rule reference to Ollama
-              running on this computer. No workspace records are sent. Local
-              answers require manual review; source text remains available
-              above.
-            </p>
-            <label>
-              <input
-                type="checkbox"
-                checked={local}
-                onChange={(e) => setLocal(e.target.checked)}
-              />{" "}
-              Use this computer’s Ollama
-            </label>
-            <a href="/sources#local-assistant">Connection instructions</a>
-          </details>
         </section>
       )}
       {!full && (

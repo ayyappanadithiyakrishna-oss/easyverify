@@ -732,3 +732,38 @@ h2 {
 .case-sources {
   margin-top: 40px;
 }
+
+.state-requirements {
+  margin: 36px 0;
+  padding: 24px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.state-requirements > label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.state-requirements > select {
+  width: 100%;
+  max-width: 360px;
+  min-height: 44px;
+  margin-bottom: 18px;
+}
+.state-requirements article {
+  border-top: 1px solid var(--line);
+  margin-top: 24px;
+  padding-top: 24px;
+}
+.state-requirements li {
+  margin-bottom: 10px;
+}
+.state-requirements a {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 600px) {
+  .state-requirements {
+    padding: 18px;
+  }
+}

@@ -1,6 +1,6 @@
 import type { Condition, Profile, Hire, Rule, Requirement } from "./types";
 import { addBusinessDays, section2Target } from "../support/dates.mjs";
-export const RULESET_VERSION = "2026-10-13.2";
+export const RULESET_VERSION = "2026-10-20.1";
 export function match(
   condition: Condition,
   p: Profile,

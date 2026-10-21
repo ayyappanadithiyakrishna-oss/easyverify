@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { ArrowRight, Copy, Printer, Check, ChevronDown } from "lucide-react";
+import { stateCoverage } from "@/lib/state-laws";
 import { states } from "@/lib/validation";
 import { rules } from "@/lib/rules";
 import { evaluate } from "@/lib/engine";
@@ -273,18 +274,16 @@ export function PublicPlanner() {
               Dates you can explain.
             </h3>
             <p>
-              Build a plan to see federal baseline requirements and researched
-              California references. Specialized circumstances and other state
-              rules need further review.
+              Build a plan to see federal requirements, state-specific guidance,
+              and the employer, contract, or local-law questions that need
+              review.
             </p>
           </div>
         ) : (
           <>
             <p className="small">
               {plan.profile.state} · {plan.profile.headcount} employees · First
-              paid day {plan.hireDate}.{" "}
-              {plan.profile.state !== "CA" &&
-                "Federal baseline only; this state's additional requirements are not yet researched."}
+              paid day {plan.hireDate}. {stateCoverage(plan.profile.state)}
             </p>
             {requirements.map((requirement) => (
               <details className="plan-step" key={requirement.id}>

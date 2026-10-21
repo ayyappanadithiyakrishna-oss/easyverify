@@ -68,7 +68,7 @@ self.onmessage = async (event) => {
   } catch (error) {
     self.postMessage({
       type: "error",
-      message: error.message || "Could not run Llama on this device.",
+      message: error.message || "Could not run local chat on this device.",
     });
   } finally {
     busy = false;
