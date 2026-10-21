@@ -1,6 +1,7 @@
 import { HelpWidget } from "@/components/help-panel";
 import type { Metadata } from "next";
 import "./globals.css";
+import "./site.css";
 export const metadata: Metadata = {
   title: {
     default: "EasyVerify · Compliance Compass",
@@ -31,12 +32,19 @@ export default function RootLayout({
         {children}
         <HelpWidget />
         <footer className="site-footer">
-          <span>EasyVerify · Compliance Compass</span>
-          <span>
-            Informational guidance. Completion is self-reported, not a legal
-            certification.
-          </span>
-          <a href="/sources">Sources & coverage</a>
+          <p>
+            Informational guidance, not legal advice. Completion is
+            self-reported and is not a certification. Federal baseline for the
+            United States; California references carry an explicit review
+            status.
+          </p>
+          <nav aria-label="Footer">
+            <a href="/sources">Sources &amp; coverage</a>
+            <a href="/history">Program history</a>
+            <a href="https://www.congressionalappchallenge.us/">
+              Congressional App Challenge
+            </a>
+          </nav>
         </footer>
       </body>
     </html>
