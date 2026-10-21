@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Copy, Mail, Link2, RefreshCw } from "lucide-react";
 import type { Business, Hire } from "@/lib/types";
 import { verdictFor } from "@/lib/face/verdict";
+import { AGREEMENT } from "@/lib/scan-agreement";
 
 const STORAGE_KEY = "easyverify-face-sessions-v1";
 
@@ -110,7 +111,10 @@ export function FaceCheckPanel({
       body: JSON.stringify(body),
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || "Something went wrong.");
+    if (!response.ok)
+      throw Object.assign(new Error(data.error || "Something went wrong."), {
+        status: response.status,
+      });
     return data;
   }
 
@@ -126,7 +130,10 @@ export function FaceCheckPanel({
         businessName: business.profile.name,
         caseNumber,
       });
-      const next = { ...readSaved(), [hire.id]: { token: data.token, url: data.url } };
+      const next = {
+        ...readSaved(),
+        [hire.id]: { token: data.token, url: data.url },
+      };
       writeSaved(next);
       setSaved(next);
       setMessage("Link created. Copy it or email it to the new hire.");
@@ -157,7 +164,20 @@ export function FaceCheckPanel({
       setMessage(`Email sent to ${hire.email}.`);
       await refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Email was not sent.");
+      if ([502, 503].includes((e as { status?: number }).status ?? 0)) {
+        // Server email is unavailable or limited to the owner: hand off to the employer's own mail app.
+        const body = [
+          `Hi ${hire.name},`,
+          "",
+          `${business.profile.name} invited you to an optional photo comparison. Please read the agreement, then open your private link:`,
+          "",
+          ...AGREEMENT.map((line) => `- ${line}`),
+          "",
+          session.url,
+        ].join("\n");
+        window.location.href = `mailto:${encodeURIComponent(hire.email)}?subject=${encodeURIComponent(`${business.profile.name}: optional photo comparison`)}&body=${encodeURIComponent(body)}`;
+        setMessage("Opened a draft in your email app. Send it from there.");
+      } else setError(e instanceof Error ? e.message : "Email was not sent.");
     } finally {
       setBusy("");
     }

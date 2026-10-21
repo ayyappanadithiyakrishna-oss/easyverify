@@ -10,6 +10,24 @@ export const metadata: Metadata = {
   description:
     "Understand employment-verification requirements, see why they apply, and organize your next steps.",
   icons: { icon: "/compass.svg" },
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL?.startsWith("https")
+      ? process.env.NEXT_PUBLIC_SITE_URL
+      : "https://easyverify.vercel.app",
+  ),
+  openGraph: {
+    title: "EasyVerify · Know what applies when you hire",
+    description:
+      "A dated hiring plan with an official source beside every step.",
+    siteName: "EasyVerify",
+    type: "website",
+  },
+};
+export const viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
 };
 export default function RootLayout({
   children,
