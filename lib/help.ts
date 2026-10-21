@@ -1,3 +1,4 @@
+import { CASE_RESULTS, CASE_SOURCES, CASE_STEPS } from "./case-guide";
 import { stateNames } from "./state-laws";
 import { states } from "./validation";
 import { rules } from "./rules";
@@ -49,6 +50,57 @@ export function helpAnswer(question: string, now = new Date()): HelpAnswer {
         "The optional face-comparison lab compares two consented photos on your device. It cannot establish identity, liveness, work authorization, or I-9 completion. It never completes onboarding tasks.",
       sources: [],
     };
+  if (
+    /before.*(?:hire|start)|new.hire.*(?:checklist|start)|onboarding checklist/i.test(
+      question,
+    )
+  ) {
+    const baseline = rules.filter((rule) =>
+      ["i9-section1", "i9-section2", "i9-retention", "everify-case"].includes(
+        rule.id,
+      ),
+    );
+    return {
+      answer:
+        "Start after the offer is accepted. Confirm your state’s enrollment rules and whether a federal contract clause applies; those facts can change the E-Verify workflow. " +
+        baseline.map((rule) => `${rule.title}: ${rule.summary}`).join("\n\n"),
+      sources: baseline.flatMap((rule) => rule.sources),
+    };
+  }
+  const caseTopic = /final nonconfirmation/i.test(question)
+    ? "final"
+    : /tentative|nonconfirmation|mismatch|\btnc\b/i.test(question)
+      ? "tnc"
+      : /case in continuance|continuance/i.test(question)
+        ? "continuance"
+        : /needs more time/i.test(question)
+          ? "more-time"
+          : /final result|final nonconfirmation/i.test(question)
+            ? "final"
+            : /resubmit/i.test(question)
+              ? "resubmit"
+              : /employment authorized/i.test(question)
+                ? "authorized"
+                : null;
+  if (caseTopic) {
+    const result = CASE_RESULTS.find((result) => result.id === caseTopic)!;
+    return {
+      answer: `${result.label}: ${result.meaning} Employer: ${result.employer.join(" ")} Employee: ${result.employee}`,
+      sources: [{ ...CASE_SOURCES.process, reviewed: "2026-10-20" }],
+    };
+  }
+  if (
+    /photo match|case process|verification process|how.*e.?verify.*work/i.test(
+      question,
+    )
+  ) {
+    return {
+      answer: CASE_STEPS.map((step) => `${step.title}: ${step.body}`).join(
+        "\n\n",
+      ),
+      sources: [{ ...CASE_SOURCES.process, reviewed: "2026-10-20" }],
+    };
+  }
   const state =
     Object.entries(stateNames)
       .sort((a, b) => b[1].length - a[1].length)

@@ -1,9 +1,37 @@
 import { ThemeToggle } from "./theme-toggle";
 import Link from "next/link";
+export function BrandMark() {
+  return (
+    <svg
+      className="brand-mark"
+      width="30"
+      height="30"
+      viewBox="0 0 32 32"
+      fill="none"
+      aria-hidden="true"
+    >
+      <rect width="32" height="32" rx="9" fill="currentColor" />
+      <path
+        d="M9 10h12M9 16h7M9 22h5"
+        stroke="#fff"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+      />
+      <path
+        d="m18 21 3 3 6-8"
+        stroke="#fff"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 export function Brand() {
   return (
     <Link href="/" className="brand" aria-label="EasyVerify home">
-      EasyVerify
+      <BrandMark />
+      <span>EasyVerify</span>
     </Link>
   );
 }

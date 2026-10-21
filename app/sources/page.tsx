@@ -1,3 +1,4 @@
+import { StateCoveragePanel } from "@/components/state-coverage";
 import { Header } from "@/components/brand";
 import { rules } from "@/lib/rules";
 import { RULESET_VERSION } from "@/lib/engine";
@@ -28,6 +29,9 @@ export default function Page() {
           contract exceptions still require review. A reviewed source is not a
           complete legal determination.
         </div>
+        <section id="state-coverage" className="panel">
+          <StateCoveragePanel state="CA" directory />
+        </section>
         <section className="panel">
           <div className="panel-heading">
             <h2>Source register</h2>

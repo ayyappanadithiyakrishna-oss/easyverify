@@ -6,31 +6,74 @@ import {
 } from "@/lib/public-plan";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { MessageCircle, X, ArrowUp, BookOpen } from "lucide-react";
+import {
+  MessageCircle,
+  X,
+  ArrowUp,
+  Square,
+  Plus,
+  Sparkles,
+} from "lucide-react";
 import {
   helpAnswer,
-  llamaMessages,
   sensitiveQuestion,
   groundedAnswer,
   type HelpAnswer,
 } from "@/lib/help";
+import { chatContext, conversationMessages, downloadLabel } from "@/lib/chat";
+import { CHAT_MODELS, type ChatModel } from "@/lib/chat-models";
+
 type Entry = HelpAnswer & {
   question: string;
   engine: string;
   reference: string;
+  grounded: boolean;
 };
+type Download = {
+  file: string;
+  loaded: number;
+  total: number;
+  progress: number;
+};
+const starters = [
+  "Explain E-Verify in plain English",
+  "Help me write a welcome email",
+  "What should I do before a new hire starts?",
+];
+
 export function HelpPanel({ full = false }: { full?: boolean }) {
   const [open, setOpen] = useState(full);
   const launcher = useRef<HTMLButtonElement>(null);
+  const transcript = useRef<HTMLDivElement>(null);
+  const [question, setQuestion] = useState("");
+  const [context, setContext] = useState<PublicPlan | null>(null);
+  const [entries, setEntries] = useState<Entry[]>([]);
+  const [modelChoice, setModelChoice] = useState<ChatModel>("fast");
+  const [modelReady, setModelReady] = useState(false);
+  const [modelLoading, setModelLoading] = useState(false);
+  const [sourceOnly, setSourceOnly] = useState(false);
+  const [modelStatus, setModelStatus] = useState("");
+  const [download, setDownload] = useState<Download | null>(null);
+  const [partial, setPartial] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [grounded, setGrounded] = useState(false);
+  const [activeQuestion, setActiveQuestion] = useState("");
+  const [error, setError] = useState("");
+  const worker = useRef<Worker | null>(null);
+  const lock = useRef(false);
+  const run = useRef(0);
+  const pending = useRef<{
+    resolve: (value: string) => void;
+    reject: (error: Error) => void;
+  } | null>(null);
+  const loading = useRef<Promise<void> | null>(null);
+  const ready = useRef<{
+    resolve: () => void;
+    reject: (error: Error) => void;
+  } | null>(null);
   useEffect(() => {
     if (open) document.getElementById("help-question")?.focus();
   }, [open]);
-  function close() {
-    setOpen(false);
-    launcher.current?.focus();
-  }
-  const [question, setQuestion] = useState("");
-  const [context, setContext] = useState<PublicPlan | null>(null);
   useEffect(() => {
     setContext(readSharedPlan(new URLSearchParams(location.search).get("p")));
     const update = (event: Event) =>
@@ -38,38 +81,40 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
     window.addEventListener("easyverify-plan", update);
     return () => window.removeEventListener("easyverify-plan", update);
   }, []);
-  const [entries, setEntries] = useState<Entry[]>([]);
-  const [modelChoice, setModelChoice] = useState("fast");
-  const modelName =
-    modelChoice === "llama" ? "Extended local chat" : "Fast local chat";
-  const [modelReady, setModelReady] = useState(false);
-  const [modelLoading, setModelLoading] = useState(false);
-  const [modelStatus, setModelStatus] = useState("");
-  const [partial, setPartial] = useState("");
-  const worker = useRef<Worker | null>(null);
-  const pending = useRef<{
-    resolve: (answer: string) => void;
-    reject: (error: Error) => void;
-  } | null>(null);
+  useEffect(() => {
+    const panel = transcript.current;
+    if (panel) panel.scrollTop = panel.scrollHeight;
+  }, [entries, partial, busy]);
   useEffect(
     () => () => {
+      run.current++;
       worker.current?.terminate();
+      ready.current?.reject(new Error("Chat closed."));
       pending.current?.reject(new Error("Chat closed."));
     },
     [],
   );
+
   function getWorker() {
     if (!worker.current) {
-      worker.current = new Worker("/llama-worker.js", { type: "module" });
-      worker.current.onmessage = (event) => {
+      const instance = new Worker("/llama-worker.js", { type: "module" });
+      worker.current = instance;
+      instance.onmessage = (event) => {
+        if (worker.current !== instance) return;
         const data = event.data;
         if (data.type === "chunk")
-          setPartial((previous) => previous + data.text);
+          setPartial((old) => (old + data.text).slice(0, 6000));
+        if (data.type === "progress") setDownload(data);
         if (data.type === "status") setModelStatus(data.text);
         if (data.type === "ready") {
           setModelReady(true);
           setModelLoading(false);
-          setModelStatus(`${modelName} is ready on this device.`);
+          setDownload(null);
+          setModelStatus(
+            `Ready · ${data.device === "webgpu" ? "GPU" : "CPU"} · loaded in ${data.seconds.toFixed(1)}s`,
+          );
+          ready.current?.resolve();
+          ready.current = null;
         }
         if (data.type === "answer") {
           pending.current?.resolve(data.answer);
@@ -78,105 +123,152 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
         if (data.type === "error") {
           setModelLoading(false);
           setError(data.message);
+          ready.current?.reject(new Error(data.message));
+          ready.current = null;
           pending.current?.reject(new Error(data.message));
           pending.current = null;
         }
       };
-      worker.current.onerror = (event) => {
-        setModelLoading(false);
-        setError(
-          event.message || "This browser could not start the local model.",
+      instance.onerror = () => {
+        const error = new Error(
+          "Local chat could not start. Retry, or use the source guide without downloading.",
         );
-        pending.current?.reject(new Error("Local model unavailable."));
+        setModelLoading(false);
+        setError(error.message);
+        ready.current?.reject(error);
+        ready.current = null;
+        pending.current?.reject(error);
         pending.current = null;
+        instance.terminate();
+        worker.current = null;
+        setModelReady(false);
       };
     }
     return worker.current;
   }
-  function loadModel() {
+  async function loadModel() {
+    if (modelReady) return;
+    if (loading.current) return loading.current;
     setError("");
     setModelLoading(true);
-    getWorker().postMessage({ type: "load", model: modelChoice });
-  }
-  function generate(messages: { role: string; content: string }[]) {
-    return new Promise<string>((resolve, reject) => {
-      pending.current = { resolve, reject };
-      getWorker().postMessage({
-        type: "generate",
-        messages,
-        model: modelChoice,
-      });
+    setDownload(null);
+    // Best effort only: some browsers deny durable storage. Cache API is
+    // still used when available, without persisting conversation content.
+    void navigator.storage?.persist?.().catch(() => false);
+    const promise = new Promise<void>((resolve, reject) => {
+      ready.current = { resolve, reject };
     });
+    loading.current = promise;
+    try {
+      getWorker().postMessage({ type: "load", model: modelChoice });
+      await promise;
+    } finally {
+      if (loading.current === promise) {
+        loading.current = null;
+        setModelLoading(false);
+      }
+    }
   }
   function stopModel() {
+    run.current++;
     worker.current?.terminate();
     worker.current = null;
-    pending.current?.reject(new Error("Local generation stopped."));
+    ready.current?.reject(
+      new Error("Download stopped. Saved files may be reused on retry."),
+    );
+    ready.current = null;
+    pending.current?.reject(new Error("Generation stopped."));
     pending.current = null;
+    loading.current = null;
+    lock.current = false;
+    setBusy(false);
     setModelLoading(false);
     setModelReady(false);
+    setPartial("");
+    setActiveQuestion("");
+    setDownload(null);
     setModelStatus("");
   }
-
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
   async function ask(value: string) {
-    if (!value.trim() || busy) return;
+    if (!value.trim() || lock.current) return;
+    lock.current = true;
+    const current = ++run.current;
     setQuestion("");
     setError("");
     setBusy(true);
     setPartial("");
-    const reference =
-      context &&
-      /plan|due|deadline|section|documents|contract|far|requirements|e.verify|retain|retention|next step/i.test(
-        value,
-      ) &&
-      !sensitiveQuestion(value)
-        ? planReference(value, context)
-        : helpAnswer(value);
+    setActiveQuestion(value);
+    const mode = chatContext(value, entries);
+    setGrounded(mode.grounded);
+    const reference = sensitiveQuestion(value)
+      ? helpAnswer(value)
+      : context &&
+          mode.grounded &&
+          !/tentative|nonconfirmation|mismatch|\btnc\b|photo match|case process|verification process/i.test(
+            mode.retrievalQuestion,
+          )
+        ? planReference(mode.retrievalQuestion, context)
+        : helpAnswer(mode.retrievalQuestion);
     let answer = reference.answer;
-    let engine = "Rule reference";
-    if (modelReady && !sensitiveQuestion(value)) {
-      try {
-        const referenceMessage = llamaMessages(value, reference);
-        const history = entries
-          .slice(-2)
-          .filter((entry) => !sensitiveQuestion(entry.question))
-          .flatMap((entry) => [
-            { role: "user", content: entry.question },
-            { role: "assistant", content: entry.answer },
-          ]);
-        answer = await generate([
-          referenceMessage[0],
-          ...history,
-          referenceMessage[1],
-        ]);
-        if (!groundedAnswer(answer, reference.answer))
-          throw new Error(
-            "The model’s answer did not match the rule reference. Showing the reference instead.",
+    let engine = "Source guide";
+    try {
+      if (!sourceOnly && !sensitiveQuestion(value)) {
+        await loadModel();
+        if (current !== run.current) return;
+        answer = await new Promise<string>((resolve, reject) => {
+          pending.current = { resolve, reject };
+          getWorker().postMessage({
+            type: "generate",
+            messages: conversationMessages(
+              value,
+              reference,
+              entries,
+              mode.grounded,
+            ),
+            model: modelChoice,
+          });
+        });
+        if (mode.grounded && !groundedAnswer(answer, reference.answer)) {
+          answer = reference.answer;
+          setError(
+            "Showing the source guide because the local explanation could not be checked against its reference.",
           );
-        engine = `${modelName} · in this browser`;
-      } catch (error) {
-        answer = reference.answer;
+        } else engine = "Local AI";
+      } else if (sourceOnly && !mode.grounded && !sensitiveQuestion(value)) {
+        answer =
+          "The source guide covers EasyVerify and employment-verification requirements. Switch to Local chat for writing, explanations, and general questions.";
+      }
+    } catch (error) {
+      if (current !== run.current) return;
+      setError(
+        error instanceof Error ? error.message : "Local chat unavailable.",
+      );
+      answer =
+        mode.grounded || sensitiveQuestion(value)
+          ? reference.answer
+          : "I couldn’t start the local model. Your question was not sent to a server. Try again, or select Quick start for the smaller download.";
+    } finally {
+      if (current === run.current) {
+        lock.current = false;
+        setBusy(false);
         setPartial("");
-        setError(
-          error instanceof Error
-            ? error.message
-            : "Local model failed; showing the cited reference.",
-        );
+        setActiveQuestion("");
       }
     }
-    setEntries((previous) => [
-      ...previous.slice(-5),
-      {
-        question: value,
-        answer,
-        sources: reference.sources,
-        engine,
-        reference: reference.answer,
-      },
-    ]);
-    setBusy(false);
+    if (current === run.current)
+      setEntries((old) => [
+        ...old.slice(-19),
+        {
+          question: sensitiveQuestion(value)
+            ? "Sensitive question withheld"
+            : value,
+          answer,
+          engine,
+          reference: reference.answer,
+          grounded: mode.grounded,
+          sources: mode.grounded ? reference.sources : [],
+        },
+      ]);
   }
   return (
     <div
@@ -185,178 +277,325 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
       {open && (
         <section
           id="help-panel"
-          className="help-panel"
-          aria-label="EasyVerify help"
-          onKeyDown={(e) => {
-            if (e.key === "Escape") close();
+          className="help-panel chat-panel"
+          aria-label="EasyVerify chat"
+          onKeyDown={(event) => {
+            if (event.key === "Escape" && !full) {
+              setOpen(false);
+              launcher.current?.focus();
+            }
           }}
         >
           <header>
             <div>
-              <BookOpen size={18} />
-              <strong>Chat with EasyVerify</strong>
-            </div>
-            <button
-              className="icon-button"
-              aria-label="Close help"
-              onClick={close}
-            >
-              <X size={18} />
-            </button>
-          </header>
-          <div className="help-content">
-            <p className="small">
-              Ask about a step, compare situations, and ask follow-up questions.
-              Keep names and identity information out of chat.
-            </p>
-            {context && (
-              <p className="small">
-                Using your public plan: {context.profile.state} · start{" "}
-                {context.hireDate}
-              </p>
-            )}
-            {!modelReady && (
-              <div className="model-onboarding">
-                <strong>A local chatbot, inside EasyVerify.</strong>
-                <label>
-                  Model
-                  <select
-                    value={modelChoice}
-                    disabled={modelLoading}
-                    onChange={(e) => {
-                      stopModel();
-                      setModelChoice(e.target.value);
-                    }}
-                  >
-                    <option value="fast">
-                      Fast local chat · smaller download
-                    </option>
-                    <option value="llama">
-                      Extended local chat · larger download
-                    </option>
-                  </select>
-                </label>
-                <p className="small">
-                  {modelChoice === "llama"
-                    ? "About 1.7 GB to download; startup and answers can be slow."
-                    : "A smaller instruction model, about 137 MB to download, for more accessible local chat."}{" "}
-                  Answers run in this browser, without an account. Your browser
-                  may cache the model if storage permits.
-                </p>
-                <button
-                  className="button full"
-                  disabled={modelLoading}
-                  onClick={loadModel}
-                >
-                  {modelLoading ? "Loading local AI…" : `Load ${modelName}`}
-                </button>
+              <Sparkles size={19} />
+              <div>
+                <strong>Ask EasyVerify</strong>
+                <small>
+                  {sourceOnly
+                    ? "Source guide · no download"
+                    : modelReady
+                      ? "Local chat · on your device"
+                      : "Private, on-device chat"}
+                </small>
               </div>
-            )}
-            {modelStatus && (
-              <p role="status" className="small">
-                {modelStatus}
-              </p>
-            )}
-            {entries.length > 0 && (
+            </div>
+            <div className="chat-header-actions">
               <button
-                className="text-button"
+                type="button"
+                className="icon-button"
+                aria-label="New conversation"
                 disabled={busy}
                 onClick={() => {
                   setEntries([]);
                   setError("");
-                  setPartial("");
                 }}
               >
-                New conversation
+                <Plus size={18} />
               </button>
-            )}
-            {(modelLoading || modelReady) && (
-              <button className="text-button" onClick={stopModel}>
-                Stop local model
-              </button>
-            )}
-            <div aria-live="polite">
-              {entries.map((entry, index) => (
-                <article className="help-answer" key={index}>
-                  <strong>{entry.question}</strong>
-                  <p>{entry.answer}</p>
-                  <small>{entry.engine}</small>
-                  {entry.sources.length > 0 && (
-                    <ul>
-                      {entry.sources.map((source) => (
-                        <li key={source.url}>
-                          <a href={source.url} target="_blank" rel="noreferrer">
-                            {source.title}
-                          </a>
-                          <small>
-                            {source.reviewed
-                              ? `Reviewed ${source.reviewed}`
-                              : "Awaiting source verification"}
-                          </small>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                  {entry.engine !== "Rule reference" && (
-                    <details open>
-                      <summary>
-                        Rule reference · check the AI explanation
-                      </summary>
-                      <p>{entry.reference}</p>
-                    </details>
-                  )}
-                </article>
-              ))}
-              {busy && (
-                <div className="help-answer">
-                  <p>
-                    {partial
-                      ? "The local model is drafting an answer…"
-                      : "Preparing your answer…"}
-                  </p>
-                </div>
+              {!full && (
+                <button
+                  type="button"
+                  className="icon-button"
+                  aria-label="Close help"
+                  onClick={() => {
+                    setOpen(false);
+                    launcher.current?.focus();
+                  }}
+                >
+                  <X size={18} />
+                </button>
               )}
             </div>
-            {error && (
-              <p role="status" className="small">
-                {error}
-              </p>
+          </header>
+          <div className="chat-settings">
+            <div
+              className="chat-mode-switch"
+              role="group"
+              aria-label="Answer mode"
+            >
+              <button
+                type="button"
+                aria-pressed={!sourceOnly}
+                disabled={busy || modelLoading}
+                onClick={() => setSourceOnly(false)}
+              >
+                Local chat
+              </button>
+              <button
+                type="button"
+                aria-pressed={sourceOnly}
+                disabled={busy || modelLoading}
+                onClick={() => setSourceOnly(true)}
+              >
+                Source guide
+              </button>
+            </div>
+            {!sourceOnly && (
+              <>
+                <label className="chat-model-label">
+                  Model
+                  <select
+                    aria-label="Local chat model"
+                    value={modelChoice}
+                    disabled={busy || modelLoading}
+                    onChange={(event) => {
+                      stopModel();
+                      setModelChoice(event.target.value as ChatModel);
+                    }}
+                  >
+                    <option value="fast">Quick start · ≈137 MB</option>
+                    <option value="quality">More capable · ≈365 MB</option>
+                  </select>
+                </label>
+                {!modelReady && (
+                  <p className="small">
+                    First use downloads model files (less on a compatible GPU).
+                    Saved files are reused when the browser cache is available.
+                    Network speed determines download time.
+                  </p>
+                )}
+                {!modelReady && !modelLoading && (
+                  <button
+                    type="button"
+                    className="button"
+                    onClick={() => void loadModel().catch(() => {})}
+                  >
+                    Prepare {CHAT_MODELS[modelChoice].name.toLowerCase()}
+                  </button>
+                )}
+                {(modelLoading || modelReady) && (
+                  <div className="chat-model-status">
+                    <span role="status">
+                      {modelStatus || "Preparing local chat…"}
+                    </span>
+                    <button
+                      type="button"
+                      className="text-button"
+                      onClick={stopModel}
+                    >
+                      {modelLoading ? "Cancel download" : "Unload model"}
+                    </button>
+                  </div>
+                )}
+                {modelLoading && download && (
+                  <div className="chat-download">
+                    <progress
+                      max="100"
+                      value={Math.min(100, download.progress)}
+                      aria-label="Current file download progress"
+                    />
+                    <span>
+                      {downloadLabel(download.loaded, download.total)} · current
+                      file
+                    </span>
+                  </div>
+                )}
+              </>
             )}
           </div>
+          <div
+            className="help-content chat-transcript"
+            ref={transcript}
+            role="log"
+            aria-label="Conversation"
+            aria-live="polite"
+          >
+            {!entries.length && !busy && (
+              <div className="chat-welcome">
+                <MessageCircle size={28} />
+                <h2>What can I help with?</h2>
+                <p>
+                  Explain a requirement, draft a message, or ask a general
+                  question. Follow up naturally.
+                </p>
+                <div className="chat-starters">
+                  {starters.map((starter) => (
+                    <button
+                      type="button"
+                      key={starter}
+                      onClick={() => {
+                        setQuestion(starter);
+                        document.getElementById("help-question")?.focus();
+                      }}
+                    >
+                      {starter}
+                      <ArrowUp size={15} />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+            {context && (
+              <p className="small">
+                Plan context: {context.profile.state} · start {context.hireDate}
+                . No employee records included.
+              </p>
+            )}
+            {entries.map((entry, index) => (
+              <article className="chat-turn" key={index}>
+                <div className="chat-user">
+                  <span className="sr-only">You: </span>
+                  {entry.question}
+                </div>
+                <div className="chat-response">
+                  <small>
+                    {entry.engine}
+                    {entry.engine === "Local AI" && !entry.grounded
+                      ? " · general answer, not source-verified"
+                      : ""}
+                  </small>
+                  <p>{entry.answer}</p>
+                  {entry.sources.length > 0 && (
+                    <details className="chat-sources">
+                      <summary>
+                        {entry.sources.length} official reference
+                        {entry.sources.length === 1 ? "" : "s"}
+                      </summary>
+                      <ul>
+                        {entry.sources.map((source) => (
+                          <li key={source.url}>
+                            <a
+                              href={source.url}
+                              target="_blank"
+                              rel="noreferrer"
+                            >
+                              {source.title} ↗
+                            </a>
+                            <small>
+                              {source.reviewed
+                                ? `Reviewed ${source.reviewed}`
+                                : "Source review pending"}
+                            </small>
+                          </li>
+                        ))}
+                      </ul>
+                      {entry.engine === "Local AI" && <p>{entry.reference}</p>}
+                    </details>
+                  )}
+                </div>
+              </article>
+            ))}
+            {busy && (
+              <article className="chat-turn">
+                <div className="chat-user">
+                  {sensitiveQuestion(activeQuestion)
+                    ? "Sensitive question withheld"
+                    : activeQuestion}
+                </div>
+                <div className="chat-response">
+                  <small>
+                    {modelLoading
+                      ? "Preparing model"
+                      : grounded
+                        ? "Checking a source-based explanation"
+                        : "EasyVerify"}
+                  </small>
+                  <p>
+                    {!grounded && partial
+                      ? partial
+                      : modelLoading
+                        ? "Loading on your device. You can cancel below."
+                        : "Thinking…"}
+                  </p>
+                </div>
+              </article>
+            )}
+          </div>
+          {error && (
+            <p role="status" className="chat-error">
+              {error}
+            </p>
+          )}
           <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              ask(question);
+            className="chat-composer"
+            onSubmit={(event) => {
+              event.preventDefault();
+              void ask(question);
             }}
           >
             <label className="sr-only" htmlFor="help-question">
               Your question
             </label>
-            <input
+            <textarea
               id="help-question"
+              rows={2}
               value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              placeholder="Ask about a step…"
-              maxLength={600}
+              onChange={(event) => setQuestion(event.target.value)}
+              onKeyDown={(event) => {
+                if (
+                  event.key === "Enter" &&
+                  !event.shiftKey &&
+                  !event.nativeEvent.isComposing
+                ) {
+                  event.preventDefault();
+                  if (question.trim() && !busy && !modelLoading)
+                    void ask(question);
+                }
+              }}
+              placeholder="Ask anything, or follow up…"
+              maxLength={2000}
               required
             />
-            <button
-              className="icon-button"
-              aria-label="Ask question"
-              disabled={busy || !question.trim()}
-            >
-              <ArrowUp size={19} />
-            </button>
+            {busy || modelLoading ? (
+              <button
+                type="button"
+                className="icon-button"
+                aria-label="Stop response or download"
+                onClick={stopModel}
+              >
+                <Square size={17} />
+              </button>
+            ) : (
+              <button
+                className="icon-button"
+                aria-label={
+                  !sourceOnly && !modelReady
+                    ? "Download model and send question"
+                    : "Send question"
+                }
+                disabled={!question.trim()}
+              >
+                <ArrowUp size={19} />
+              </button>
+            )}
           </form>
+          <p className="chat-disclaimer">
+            {!sourceOnly && !modelReady
+              ? "Sending starts the selected download. "
+              : ""}
+            Small local models can make mistakes. No live web access. Keep
+            identity numbers and employee documents out of chat.
+          </p>
         </section>
       )}
       {!full && (
         <button
           ref={launcher}
+          type="button"
           className="help-launcher"
           aria-controls="help-panel"
           aria-expanded={open}
-          aria-label={open ? "Close source guide" : "Chat with EasyVerify"}
           onClick={() => setOpen(!open)}
         >
           <MessageCircle size={19} />
@@ -366,7 +605,6 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
     </div>
   );
 }
-
 export function HelpWidget() {
   const pathname = usePathname();
   return pathname === "/assistant" ? null : <HelpPanel />;

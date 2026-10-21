@@ -1,4 +1,5 @@
 "use client";
+import { StateCoveragePanel } from "@/components/state-coverage";
 import { stateCoverage } from "@/lib/state-laws";
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -715,6 +716,9 @@ export function Workspace({
                   {requirements.length ? (
                     requirements
                       .filter((r) => !done(r))
+                      .sort((a, b) =>
+                        (a.due ?? "9999").localeCompare(b.due ?? "9999"),
+                      )
                       .slice(0, 5)
                       .map(requirementCard)
                   ) : (
@@ -751,30 +755,13 @@ export function Workspace({
                       </p>
                     )}
                 </section>
-                <aside className="panel reasoning">
-                  <span className="eyebrow">Why it applies</span>
-                  <h2>Every requirement has a reason.</h2>
-                  <p>
-                    Open any step to see the input conditions, official source,
-                    and the rules that contribute to it.
-                  </p>
-                  <div className="layer">
-                    <span>Federal</span>
-                    <strong>Baseline responsibilities</strong>
-                  </div>
-                  <div className="layer">
-                    <span>Contract</span>
-                    <strong>FAR clause & exceptions</strong>
-                  </div>
-                  <div className="layer">
-                    <span>California</span>
-                    <strong>Additional restrictions</strong>
-                  </div>
+                <aside className="panel dashboard-state-panel">
+                  <StateCoveragePanel state={business?.profile.state ?? "CA"} />
                   <button
                     className="text-button"
                     onClick={() => navigate("comparison")}
                   >
-                    Compare two profiles <ArrowRight size={15} />
+                    Compare business profiles <ArrowRight size={15} />
                   </button>
                 </aside>
               </div>
@@ -861,12 +848,6 @@ export function Workspace({
                     <li key={a}>{a}</li>
                   ))}
                 </ol>
-                <h2>Why it applies</h2>
-                <ul className="trace">
-                  {detail.trace.map((t, i) => (
-                    <li key={i}>{t}</li>
-                  ))}
-                </ul>
                 <h2>Official sources</h2>
                 {detail.sources.map((s) => (
                   <div className="source-link" key={s.url}>

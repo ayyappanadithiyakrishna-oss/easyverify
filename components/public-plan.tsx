@@ -315,12 +315,6 @@ export function PublicPlanner() {
                       <li key={action}>{action}</li>
                     ))}
                   </ul>
-                  <h3>Why this appears</h3>
-                  <ul>
-                    {requirement.trace.map((trace) => (
-                      <li key={trace}>{trace}</li>
-                    ))}
-                  </ul>
                   <div className="plan-citations">
                     {requirement.sources.map((source) => (
                       <a

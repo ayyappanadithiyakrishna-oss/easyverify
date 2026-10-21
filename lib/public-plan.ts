@@ -66,9 +66,7 @@ export function planReference(question: string, plan: PublicPlan) {
     );
   const selected = results
     .filter((requirement) =>
-      /state|local|enroll|florida|arizona|carolina|california|law/i.test(
-        question,
-      )
+      stateQuestion
         ? requirement.id.startsWith("state-") ||
           requirement.ruleIds.some((id) => id.startsWith("ca-"))
         : /section\s*1/i.test(question)
