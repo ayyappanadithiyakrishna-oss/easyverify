@@ -9,7 +9,7 @@ export default function Page() {
     <>
       <Header />
       <main id="main" className="document-main">
-        <span className="eyebrow">SOURCE LIBRARY</span>
+        <span className="eyebrow">Source library</span>
         <h1>
           Know what’s behind
           <br />

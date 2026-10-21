@@ -429,3 +429,176 @@ h1 {
 h2 {
   letter-spacing: -0.01em;
 }
+
+/* Shared labels and badges */
+.eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--muted);
+}
+.badge,
+.badge.dark {
+  padding: 3px 10px;
+  border: 0;
+  border-radius: 980px;
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 12px;
+}
+.badge.dark {
+  background: var(--action);
+  color: #fff;
+}
+.callout {
+  border: 0;
+  border-radius: 12px;
+}
+.callout.error {
+  background: color-mix(in srgb, #ff3b30 10%, var(--white));
+}
+.text-button,
+.plan-citations a,
+.source-link {
+  color: var(--accent);
+}
+.text-button:hover {
+  color: var(--accent);
+}
+
+/* Hiring planner */
+.public-planner {
+  max-width: 1240px;
+  gap: 24px;
+  padding: 0 24px 24px;
+}
+.planner-form {
+  padding: 56px 24px 24px;
+}
+.planner-heading h1 {
+  margin: 16px 0;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.08;
+}
+.planner-heading p {
+  font-size: 17px;
+}
+.planner-results {
+  margin-top: 24px;
+  padding: 40px;
+  border: 0;
+  border-radius: 18px;
+}
+.orbit-mark {
+  border: 0;
+  background: var(--white);
+}
+.plan-step-icon {
+  border: 0;
+  background: var(--white);
+  border-radius: 10px;
+}
+.plan-step summary strong {
+  font-weight: 600;
+  font-size: 17px;
+}
+.plan-step summary small,
+.plan-step-body {
+  font-size: 14px;
+}
+@media (max-width: 900px) {
+  .public-planner {
+    grid-template-columns: 1fr;
+  }
+  .planner-results {
+    padding: 24px;
+  }
+}
+
+/* Assistant */
+.assistant-page {
+  max-width: var(--content);
+  margin: 56px auto 96px;
+  padding: 0 24px;
+  gap: 56px;
+}
+.assistant-intro h1 {
+  margin: 16px 0;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.08;
+}
+.assistant-full .help-panel {
+  border: 0;
+  background: var(--surface);
+  box-shadow: none;
+}
+
+/* Workspace */
+.sidebar {
+  background: var(--surface);
+  border-right: 0;
+}
+.sidebar nav button,
+.sidebar nav a {
+  border-radius: 10px;
+  font-size: 14px;
+}
+.sidebar nav button:hover,
+.sidebar nav a:hover {
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+}
+.sidebar nav button.active {
+  background: color-mix(in srgb, var(--action) 14%, transparent);
+  color: var(--accent);
+}
+.avatar {
+  border: 0;
+  border-radius: 50%;
+  background: var(--white);
+}
+.workspace-top {
+  height: 56px;
+  font-size: 13px;
+}
+.workspace-main {
+  padding: 40px 36px 72px;
+}
+.page-heading h1 {
+  font-size: clamp(30px, 4vw, 40px);
+  letter-spacing: -0.015em;
+}
+.page-heading p {
+  font-size: 15px;
+}
+.stats {
+  border: 0;
+  border-radius: 18px;
+  background: var(--surface);
+}
+.stat {
+  border-color: var(--line);
+}
+.stat > strong {
+  font-weight: 600;
+}
+.panel {
+  padding: 28px;
+}
+.panel-heading h2,
+.panel > h2 {
+  font-weight: 600;
+}
+.requirement-row {
+  border-color: var(--line);
+}
+.check-box {
+  border-radius: 50%;
+  background: var(--white);
+}
+.completed .check-box {
+  background: var(--action);
+  border-color: var(--action);
+}

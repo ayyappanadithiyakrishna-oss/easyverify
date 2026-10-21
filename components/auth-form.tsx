@@ -80,7 +80,7 @@ export function AuthForm({ mode }: { mode: "login" | "register" | "reset" }) {
         : "Welcome back";
   return (
     <div className="auth-card">
-      <div className="eyebrow">YOUR EASYVERIFY ACCOUNT</div>
+      <div className="eyebrow">Your EasyVerify account</div>
       <h1>{heading}</h1>
       <p>
         {mode === "register"

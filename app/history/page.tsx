@@ -4,7 +4,7 @@ export default function Page() {
     <>
       <Header />
       <main id="main" className="document-main">
-        <span className="eyebrow">WHY REQUIREMENTS COME IN LAYERS</span>
+        <span className="eyebrow">Why requirements come in layers</span>
         <h1>
           One business.
           <br />

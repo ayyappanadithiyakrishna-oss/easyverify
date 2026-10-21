@@ -548,7 +548,6 @@ export function Workspace({
         <main id="main" className="workspace-main">
           <div className="page-heading">
             <div>
-              <div className="eyebrow">COMPLIANCE COMPASS</div>
               <h1 tabIndex={-1}>{titles[view]}</h1>
               <p>
                 {business
@@ -754,7 +753,7 @@ export function Workspace({
                     )}
                 </section>
                 <aside className="panel reasoning">
-                  <span className="eyebrow">WHY IT APPLIES</span>
+                  <span className="eyebrow">Why it applies</span>
                   <h2>Every requirement has a reason.</h2>
                   <p>
                     Open any step to see the input conditions, official source,
@@ -1061,8 +1060,8 @@ export function Workspace({
                   <section className="panel" key={b.id}>
                     <span className="eyebrow">
                       {b.profile.contractor === "none"
-                        ? "ORDINARY EMPLOYER"
-                        : "CONTRACTOR PROFILE"}
+                        ? "Ordinary employer"
+                        : "Contractor profile"}
                     </span>
                     <h2>{b.profile.name}</h2>
                     <p>

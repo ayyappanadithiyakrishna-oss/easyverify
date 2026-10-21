@@ -44,7 +44,7 @@ export function Onboarding() {
       <Header />
       <main id="main" className="auth-main">
         <section className="auth-card">
-          <span className="eyebrow">NEW-HIRE ONBOARDING</span>
+          <span className="eyebrow">New-hire onboarding</span>
           <h1>Your next steps, in one place.</h1>
           <p>
             Sign in with the email address your employer invited. The link works
