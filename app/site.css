@@ -602,3 +602,9 @@ h2 {
   background: var(--action);
   border-color: var(--action);
 }
+
+/* Inline notices keep running text together */
+.auth-card .callout,
+.document-main .callout {
+  display: block;
+}
