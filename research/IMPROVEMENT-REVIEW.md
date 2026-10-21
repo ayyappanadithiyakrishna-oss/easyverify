@@ -17,3 +17,7 @@ The official CAC logo is used in a contest-information block with an independent
 Priority remaining work: activate the real backend and verified Google provider; review blocked California sources; obtain real student user-research evidence; record a focused three-minute demo; document substantial student technical contributions and all AI use. The rulebook requires these contributions and disclosure; visual polish cannot establish eligibility.
 
 Official 2026 judging language reviewed from the rulebook: quality of the idea (creativity/originality), implementation (user experience/design), and demonstrated coding/programming skills. District offices may modify judging criteria; these are not invented district-specific weights. Rulebook: https://www.congressionalappchallenge.us/wp-content/uploads/2026/05/2026-CAC-Rules.pdf .
+
+## October 20 revision
+
+The face comparison no longer uses Human/FaceRes (the paragraph above describes the retired version). It uses YuNet and SFace with a published 0.363 cosine threshold, quality warnings, and measured accuracy; see `research/FACE-MODEL.md`. The case walkthrough (`/case`) and state guidance were added. Remaining blockers are unchanged and are not engineering problems: the CAC originality rule (students must do the coding), real user research, a recorded demo, and accurate AI disclosure. See `submission/STUDENT-WORK-PLAN.md`.
