@@ -75,3 +75,38 @@ test("model cannot reverse an employee completion obligation", () => {
     true,
   );
 });
+
+test("a topical answer cannot replace the first-workday deadline with offer acceptance", () => {
+  const reference = helpAnswer("When is Section 1 due?", now).answer;
+  assert.equal(
+    groundedAnswer(
+      "When is Section 1 due? The correct time period for Section 1 is when the employee accepts the offer.",
+      reference,
+    ),
+    false,
+  );
+  assert.equal(
+    groundedAnswer(
+      "The employee completes Section 1 on the first day of paid work after accepting the offer.",
+      reference,
+    ),
+    true,
+  );
+  assert.equal(
+    groundedAnswer(
+      "Complete Section 1 on the first day before accepting the offer.",
+      reference,
+    ),
+    false,
+  );
+});
+test("mismatch explanations cannot introduce an adverse-action instruction", () => {
+  const reference = helpAnswer("What does a TNC mean?", now).answer;
+  assert.equal(
+    groundedAnswer(
+      "A tentative nonconfirmation means you should terminate the employee while the case is pending.",
+      reference,
+    ),
+    false,
+  );
+});

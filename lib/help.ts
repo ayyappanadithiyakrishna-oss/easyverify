@@ -181,6 +181,37 @@ const ignored = new Set(
   ),
 );
 export function groundedAnswer(answer: string, reference: string) {
+  // A topical overlap alone cannot establish a correct deadline. Preserve
+  // the timing anchors in the reference or show the source text instead.
+  if (
+    /first day of paid work/i.test(reference) &&
+    !/first (?:day|paid)|1st (?:day|paid)|day (?:one|1)|first workday/i.test(
+      answer,
+    )
+  )
+    return false;
+  if (
+    /three business days/i.test(reference) &&
+    !/(?:three|3) business days/i.test(answer)
+  )
+    return false;
+  if (
+    /after accepting the offer|after the offer is accepted/i.test(reference) &&
+    /before (?:accepting|the offer)/i.test(answer)
+  )
+    return false;
+  if (
+    /tentative|pending|mismatch/i.test(reference) &&
+    /\b(fire|terminate|suspend)\b|withhold pay|delay training/i.test(answer)
+  )
+    return false;
+  if (
+    /awaiting verification|needs review|verification pending|applicability needs review/i.test(
+      reference,
+    ) &&
+    !/review|verif|unknown|confirm|uncertain/i.test(answer)
+  )
+    return false;
   const tokens = (text: string) =>
     new Set(
       (text.toLowerCase().match(/[a-z0-9]+/g) || []).filter(
