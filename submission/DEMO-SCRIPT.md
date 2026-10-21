@@ -9,7 +9,7 @@ The portal requires: each participant's name, the app's name, its purpose in one
 | 0:30 to 1:00 | `/plan`: pick a work location, leave the contractor question as "Not sure", build the plan. Point at the dated steps and the source link on one of them. |
 | 1:00 to 1:20 | Change the contractor answer. Show the step list and the review-needed flag change. This is the programming moment: say what rule matched and why. |
 | 1:20 to 1:50 | `/case`: enter a start date and show the due date. Switch tabs through two case results and read what the employer does for a tentative nonconfirmation. |
-| 1:50 to 2:10 | Optional: `/identity-check`. Show a same-person pair and a different-person pair. Say it is a similarity measurement on the user's own device, not identity verification, and say what you measured. |
+| 1:50 to 2:10 | Optional: in the workspace open Face check, enter a case number, generate the link, open it as the new hire, send results, then use View status. Or show `/identity-check`. Show a same-person pair and a different-person pair. Say it is a similarity measurement on the user's own device, not identity verification, and say what you measured. |
 | 2:10 to 2:30 | Tools: TypeScript, React, Next.js, the open-source models named on the page, and every AI tool used and what it did. Then one real lesson each student learned from code they wrote. |
 
 Do not claim: interviews you did not do, accuracy beyond what `research/FACE-MODEL.md` shows, government connection, legal compliance, or that the code is entirely yours if it is not.

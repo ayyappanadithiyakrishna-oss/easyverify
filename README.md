@@ -84,3 +84,12 @@ Alternative hosting configuration is included: Dockerfile for standalone Next.js
 The default local model is now HuggingFaceTB/SmolLM2-135M-Instruct (about 137 MB), with Llama 3.2 q4 available as the larger option. Both are real local inference. The browser's model-cache quota in QA was about 930 MB, so the larger Llama file could not be cached there. A conservative relevance/numeric guard rejects clearly unsupported output and shows the original reference; it is not legal validation.
 
 From a generated plan, Ask about this plan opens chat with the validated public inputs. Context and dates come from the rules engine, not model arithmetic. Each conversation entry preserves its own original reference so later profile edits cannot silently change the explanation behind an older answer.
+
+## Optional face check (employer link, employee result)
+
+In the workspace, an employer opens **Face check**, picks a new hire, enters the E-Verify case number, and generates a private link. They can copy it or email it to the hire's address through Resend, and the email includes the agreement the hire reads first. The hire opens `/check/<token>`, accepts the agreement, runs the on-device comparison (see `research/FACE-MODEL.md`), and chooses **Send results**. Only a similarity score and a warning count go back. The employer sees the result under **View status of <name>** at the bottom left of the sidebar.
+
+- Links are HMAC-signed capability URLs (`lib/scan.ts`); sessions expire after 7 days and results can be sent once.
+- Session status is stored as a private JSON blob (Vercel Blob). No photos, face data, or email addresses are stored; the email address is used only to send the message.
+- The server recomputes the verdict band from the score. The score is reported by the hire's browser, so it is an experimental measurement, not verification.
+- Set `SCAN_LINK_SECRET` and `BLOB_READ_WRITE_TOKEN` in production, and `RESEND_API_KEY` (plus a verified `RESEND_FROM`) to enable email. See `.env.example`.

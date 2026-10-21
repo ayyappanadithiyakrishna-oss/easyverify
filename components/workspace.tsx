@@ -22,6 +22,7 @@ import {
   GitCompareArrows,
   ScanFace,
 } from "lucide-react";
+import { FaceCheckPanel } from "./face-check-panel";
 import { ThemeToggle } from "./theme-toggle";
 import { Brand } from "./brand";
 import { browserClient } from "@/lib/supabase";
@@ -443,6 +444,8 @@ export function Workspace({
     activity: "Activity history",
     profile: edit ? "Edit business profile" : "Business profile",
     newhire: "Add a new hire",
+    facecheck: "Face check",
+    facestatus: "Face check status",
     detail: detail?.title || "Requirement",
   };
   return (
@@ -484,9 +487,18 @@ export function Workspace({
                 {label}
               </button>
             ))}
+          {data.role === "employer" && (
+            <button
+              className={view === "facecheck" ? "active" : ""}
+              onClick={() => navigate("facecheck")}
+            >
+              <ScanFace size={18} />
+              Face check
+            </button>
+          )}
           <Link href="/identity-check">
             <ScanFace size={18} />
-            Optional face lab
+            Try the face scan
           </Link>
           <Link href="/sources">
             <BookOpen size={18} />
@@ -494,6 +506,14 @@ export function Workspace({
           </Link>
         </nav>
         <div className="sidebar-bottom">
+          {data.role === "employer" && hire && (
+            <button
+              className="button secondary fc-status-button"
+              onClick={() => navigate("facestatus")}
+            >
+              View status of {hire.name.split(" ")[0]}
+            </button>
+          )}
           <small>{data.userEmail}</small>
           {demo ? (
             <Link href="/register" className="button full">
@@ -987,6 +1007,18 @@ export function Workspace({
                 ))}
             </section>
           )}
+          {(view === "facecheck" || view === "facestatus") &&
+            data.role === "employer" &&
+            business && (
+              <FaceCheckPanel
+                mode={view === "facecheck" ? "send" : "status"}
+                business={business}
+                hires={hires}
+                hire={hire}
+                onPick={setHireId}
+                onSend={() => navigate("facecheck")}
+              />
+            )}
           {view === "profile" && data.role === "employer" && (
             <ProfileForm
               key={edit?.id || "new"}

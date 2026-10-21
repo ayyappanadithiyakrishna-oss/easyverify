@@ -26,7 +26,16 @@ type Report = {
   quality: Quality[];
 };
 
-export function FaceLab() {
+/** When set, the hire can send the score (never the photos) back to their employer. */
+export type FaceSession = {
+  token: string;
+  businessName: string;
+  onSent?: () => void;
+};
+
+export function FaceLab({ session }: { session?: FaceSession }) {
+  const [sent, setSent] = useState<"" | "sending" | "sent">("");
+  const [sendError, setSendError] = useState("");
   const [files, setFiles] = useState<(File | null)[]>([null, null]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [consent, setConsent] = useState(false);
@@ -116,9 +125,37 @@ export function FaceLab() {
     setPreviews(urls);
     return () => urls.forEach((url) => url && URL.revokeObjectURL(url));
   }, [files]);
+  async function sendResults() {
+    if (!session || !report) return;
+    setSent("sending");
+    setSendError("");
+    try {
+      const response = await fetch("/api/scan", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "result",
+          token: session.token,
+          similarity: report.similarity,
+          warnings: report.quality.reduce((n, q) => n + q.warnings.length, 0),
+        }),
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || "Could not send results.");
+      setSent("sent");
+      session.onSent?.();
+    } catch (error) {
+      setSent("");
+      setSendError(
+        error instanceof Error ? error.message : "Could not send results.",
+      );
+    }
+  }
   function clear() {
     runId.current++;
     stopCamera();
+    setSent("");
+    setSendError("");
     setReport(null);
     setFiles([null, null]);
     setConsent(false);
@@ -419,6 +456,37 @@ export function FaceLab() {
               pose, image quality, and model bias affect it, and there is no
               liveness check, so a photo of a photo can fool it.
             </p>
+            {session && (
+              <div className="check-send">
+                <h3>Send results to {session.businessName}</h3>
+                {sent === "sent" ? (
+                  <p role="status">
+                    Sent. Only the similarity score and quality warnings were
+                    shared. You can clear your photos and close this page.
+                  </p>
+                ) : (
+                  <>
+                    <p>
+                      This shares the score above and the number of photo
+                      warnings. Your photos and face data stay on this device.
+                    </p>
+                    <button
+                      type="button"
+                      className="button"
+                      onClick={() => void sendResults()}
+                      disabled={sent === "sending"}
+                    >
+                      {sent === "sending" ? "Sending…" : "Send results"}
+                    </button>
+                    {sendError && (
+                      <p role="alert" className="fc-error">
+                        {sendError}
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>
