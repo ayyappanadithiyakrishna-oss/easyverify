@@ -1,0 +1,38 @@
+.scan-verdict {
+  margin: 20px 0;
+  padding: 20px 24px;
+  border-radius: 14px;
+  background: var(--surface);
+}
+.scan-verdict h3 {
+  margin: 0 0 6px;
+  font-size: 24px;
+}
+.scan-verdict p {
+  margin: 0;
+}
+.scan-verdict.strong h3,
+.scan-verdict.likely h3 {
+  color: #248a3d;
+}
+.scan-verdict.unclear h3 {
+  color: #b25000;
+}
+.scan-verdict.different h3 {
+  color: #d70015;
+}
+:root[data-theme="dark"] .scan-verdict.strong h3,
+:root[data-theme="dark"] .scan-verdict.likely h3 {
+  color: #30d158;
+}
+:root[data-theme="dark"] .scan-verdict.unclear h3 {
+  color: #ff9f0a;
+}
+:root[data-theme="dark"] .scan-verdict.different h3 {
+  color: #ff6961;
+}
+.scan-warnings {
+  margin: 8px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+}

@@ -1,7 +1,15 @@
 "use client";
+import "./face-lab.css";
 import { useEffect, useRef, useState } from "react";
-import type Human from "@vladmandic/human";
-import { loadHuman } from "@/lib/load-human";
+import { loadFaceEngine } from "@/lib/face/browser";
+import { cosine, largestFace } from "@/lib/face/geometry";
+import {
+  assessQuality,
+  sharpnessOf,
+  verdictFor,
+  type Quality,
+  type Verdict,
+} from "@/lib/face/verdict";
 import {
   ScanFace,
   Trash2,
@@ -9,20 +17,30 @@ import {
   ShieldCheck,
   CheckCircle2,
 } from "lucide-react";
+
+const MAX_SIDE = 1280;
+
+type Report = {
+  similarity: number;
+  verdict: Verdict;
+  quality: Quality[];
+};
+
 export function FaceLab() {
   const [files, setFiles] = useState<(File | null)[]>([null, null]);
   const [previews, setPreviews] = useState<string[]>([]);
   const [consent, setConsent] = useState(false);
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState("");
-  const [similarity, setSimilarity] = useState<number | null>(null);
-  const [details, setDetails] = useState<
-    { confidence: number; pixels: number; coverage: number }[]
-  >([]);
+  const [report, setReport] = useState<Report | null>(null);
   const [camera, setCamera] = useState<number | null>(null);
   const video = useRef<HTMLVideoElement>(null);
   const stream = useRef<MediaStream | null>(null);
   const cameraRun = useRef(0);
+  const runId = useRef(0);
+  const processing = useRef(false);
+  const form = useRef<HTMLFormElement>(null);
+
   function stopCamera() {
     cameraRun.current++;
     stream.current?.getTracks().forEach((track) => track.stop());
@@ -90,14 +108,9 @@ export function FaceLab() {
           : file,
       ),
     );
-    setSimilarity(null);
-    setDetails([]);
+    setReport(null);
     stopCamera();
   }
-  const model = useRef<Human | null>(null);
-  const runId = useRef(0);
-  const processing = useRef(false);
-  const form = useRef<HTMLFormElement>(null);
   useEffect(() => {
     const urls = files.map((file) => (file ? URL.createObjectURL(file) : ""));
     setPreviews(urls);
@@ -106,10 +119,9 @@ export function FaceLab() {
   function clear() {
     runId.current++;
     stopCamera();
-    setDetails([]);
+    setReport(null);
     setFiles([null, null]);
     setConsent(false);
-    setSimilarity(null);
     setMessage("");
     setBusy(processing.current);
     form.current?.reset();
@@ -122,6 +134,7 @@ export function FaceLab() {
     },
     [],
   );
+
   async function compare(e: React.FormEvent) {
     e.preventDefault();
     if (!consent || !files[0] || !files[1] || processing.current) return;
@@ -129,139 +142,74 @@ export function FaceLab() {
     const current = ++runId.current;
     setBusy(true);
     stopCamera();
-    setSimilarity(null);
-    setDetails([]);
-    const embeddings: number[][] = [];
-    const measurements: {
-      confidence: number;
-      pixels: number;
-      coverage: number;
-    }[] = [];
+    setReport(null);
+    const embeddings: Float32Array[] = [];
+    const quality: Quality[] = [];
     setMessage("Loading the face models on this device…");
     try {
-      if (!model.current) {
-        const Human = await loadHuman();
-        model.current = new Human({
-          backend: "webgl",
-          modelBasePath: "/models/",
-          cacheSensitivity: 0,
-          skipAllowed: false,
-          filter: { enabled: false },
-          gesture: { enabled: false },
-          body: { enabled: false },
-          hand: { enabled: false },
-          object: { enabled: false },
-          face: {
-            enabled: true,
-            detector: { rotation: true, maxDetected: 2, minConfidence: 0.6 },
-            mesh: { enabled: true },
-            iris: { enabled: false },
-            description: { enabled: true },
-            emotion: { enabled: false },
-            antispoof: { enabled: false },
-            liveness: { enabled: false },
-            gear: { enabled: false },
-          },
-        });
-      }
-      await model.current.load();
+      const engine = await loadFaceEngine();
       for (const file of files) {
         if (current !== runId.current) return;
         const label =
-          embeddings.length === 0 ? "Reference photo" : "Comparison photo";
-        setMessage(
-          `Analyzing ${label.toLowerCase()}: locating face and extracting features…`,
-        );
-        const bitmap = await createImageBitmap(file!);
-        if (
-          bitmap.width > 16000 ||
-          bitmap.height > 16000 ||
-          bitmap.width * bitmap.height > 40000000
-        ) {
+          embeddings.length === 0 ? "reference photo" : "comparison photo";
+        setMessage(`Analyzing the ${label}: finding the face and aligning it…`);
+        const bitmap = await createImageBitmap(file!, {
+          imageOrientation: "from-image",
+        });
+        if (bitmap.width * bitmap.height > 40_000_000) {
           bitmap.close();
           throw new Error(
             "Photo dimensions are too large. Use an image under 40 megapixels.",
           );
         }
+        const scale = Math.min(1, MAX_SIDE / Math.max(bitmap.width, bitmap.height));
         const canvas = document.createElement("canvas");
-        const scale = Math.min(1, 900 / Math.max(bitmap.width, bitmap.height));
         canvas.width = Math.round(bitmap.width * scale);
         canvas.height = Math.round(bitmap.height * scale);
-        canvas
-          .getContext("2d")!
-          .drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+        const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+        ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
         bitmap.close();
-        const width = canvas.width;
-        const height = canvas.height;
-        const result = await (async () => {
-          try {
-            return await model.current!.detect(canvas);
-          } finally {
-            canvas.width = 0;
-            canvas.height = 0;
-          }
-        })();
-        if (result.face.length !== 1)
+        const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        canvas.width = canvas.height = 0;
+        const faces = await engine.detect(image);
+        const face = largestFace(faces);
+        if (!face)
           throw new Error(
-            `${label}: found ${result.face.length} faces. Use one clear, front-facing person per photo.`,
+            `No face found in the ${label}. Use one clear, front-facing person, with the whole face visible.`,
           );
-        if (!result.face[0].embedding?.length)
-          throw new Error(
-            "Could not extract a face descriptor. Try a sharper photo.",
-          );
-        const face = result.face[0];
-        measurements.push({
-          confidence: Math.round(face.boxScore * 100),
-          pixels: Math.round(Math.min(face.box[2], face.box[3])),
-          coverage: Math.round(
-            ((face.box[2] * face.box[3]) / (width * height)) * 100,
-          ),
-        });
-        embeddings.push([...face.embedding!]);
-        face.embedding?.fill(0);
-        // Do not retain demographic estimates or the library's image results.
-        model.current.result.face = [];
-        model.current.result.canvas = null;
+        const sharp = sharpnessOf(image.data, image.width, image.height, face.box);
+        quality.push(assessQuality(faces, face, image.width, image.height, sharp));
+        embeddings.push(await engine.embed(image, face));
       }
-      const score = model.current.match.similarity(
-        embeddings[0],
-        embeddings[1],
-      );
-      embeddings.forEach((embedding) => embedding.fill(0));
-      if (!Number.isFinite(score))
+      if (current !== runId.current) return;
+      const similarity = cosine(embeddings[0], embeddings[1]);
+      if (!Number.isFinite(similarity))
         throw new Error("The comparison could not be calculated.");
-      if (current === runId.current) {
-        setDetails(measurements);
-        setSimilarity(Math.round(Math.max(0, Math.min(1, score)) * 100));
-        setMessage(
-          "Comparison complete. Photos remain on this page until you clear them or leave.",
-        );
-      }
+      setReport({ similarity, verdict: verdictFor(similarity), quality });
+      setMessage(
+        "Comparison complete. Photos stay on this page until you clear them or leave.",
+      );
     } catch (error) {
       if (current === runId.current)
         setMessage(
           error instanceof Error
             ? error.message
-            : "This browser could not run the face model. Try a browser with WebGL enabled.",
+            : "This browser could not run the face model. Try a recent Chrome, Safari, or Edge.",
         );
     } finally {
       embeddings.forEach((embedding) => embedding.fill(0));
-      if (model.current) {
-        model.current.result.face.forEach((face) => face.embedding?.fill(0));
-        model.current.result.face = [];
-        model.current.result.canvas = null;
-      }
       processing.current = false;
       setBusy(false);
     }
   }
+
   return (
     <div className="face-lab">
       <div className="callout scan-privacy">
         <ShieldCheck size={22} />
         <p>
           Compare two photos you have permission to use. Processing runs in this
-          browser; photos and descriptors are not uploaded or saved to your
+          browser; photos and face data are not uploaded or saved to your
           workspace.
         </p>
       </div>
@@ -301,8 +249,7 @@ export function FaceLab() {
                 disabled={!consent || busy}
                 onChange={(e) => {
                   const file = e.target.files?.[0] || null;
-                  setSimilarity(null);
-                  setDetails([]);
+                  setReport(null);
                   setMessage("");
                   if (
                     file &&
@@ -365,7 +312,7 @@ export function FaceLab() {
               controls
               aria-label="Live camera preview"
             />
-            <div className="actions">
+            <div className="ev-actions">
               <button
                 type="button"
                 className="button"
@@ -406,65 +353,71 @@ export function FaceLab() {
           </p>
         )}
         {busy && <progress aria-label="Face analysis in progress" />}
-        {similarity !== null && (
+        {report && (
           <div className="face-result">
             <div className="scan-result-heading">
               <CheckCircle2 size={22} />
               <h2>Comparison report</h2>
               <span>Processed locally</span>
             </div>
+            <div className={`scan-verdict ${report.verdict.band}`}>
+              <h3>{report.verdict.title}</h3>
+              <p>{report.verdict.detail}</p>
+            </div>
             <div className="scan-score">
-              <strong>
-                {similarity}
-                <small> / 100</small>
-              </strong>
+              <strong>{report.similarity.toFixed(2)}</strong>
               <div>
-                <b>Descriptor similarity</b>
-                <span>A model measurement, not identity confidence.</span>
+                <b>Cosine similarity</b>
+                <span>
+                  Same person averages about 0.66 and different people about
+                  0.08 on the LFW test set. The model&apos;s own cutoff is
+                  0.36.
+                </span>
               </div>
             </div>
             <meter
-              min="0"
-              max="100"
-              value={similarity}
-              aria-label="Descriptor similarity"
+              min="-0.2"
+              max="1"
+              low={0.25}
+              high={0.363}
+              optimum={1}
+              value={report.similarity}
+              aria-label="Cosine similarity"
             />
             <div className="scan-measurements">
-              {details.map((detail, index) => (
+              {report.quality.map((q, index) => (
                 <section key={index}>
-                  <h3>
-                    {index === 0 ? "Reference photo" : "Comparison photo"}
-                  </h3>
+                  <h3>{index === 0 ? "Reference photo" : "Comparison photo"}</h3>
                   <dl>
                     <div>
-                      <dt>Faces detected</dt>
-                      <dd>1</dd>
-                    </div>
-                    <div>
                       <dt>Detection confidence</dt>
-                      <dd>{detail.confidence}%</dd>
+                      <dd>{q.detectionScore}%</dd>
                     </div>
                     <div>
-                      <dt>Face size in analyzed image</dt>
-                      <dd>{detail.pixels} px</dd>
+                      <dt>Face size</dt>
+                      <dd>{q.faceSize} px</dd>
                     </div>
                     <div>
-                      <dt>Image occupied by face</dt>
-                      <dd>{detail.coverage}%</dd>
+                      <dt>Head tilt</dt>
+                      <dd>{q.tiltDegrees}°</dd>
                     </div>
                   </dl>
-                  <p>
-                    {detail.pixels < 120
-                      ? "Small face region. Try a closer, sharper portrait before interpreting the score."
-                      : "Face region extracted. Even lighting and a front-facing pose help comparison."}
-                  </p>
+                  {q.warnings.length ? (
+                    <ul className="scan-warnings">
+                      {q.warnings.map((w) => (
+                        <li key={w}>{w}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>Good photo quality for comparison.</p>
+                  )}
                 </section>
               ))}
             </div>
             <p>
-              This score is not the probability of a correct identity match.
-              Lighting, image quality, model bias, and spoofed photos can affect
-              it. There is no pass/fail threshold and no liveness check.
+              This is a similarity measurement, not proof of identity. Lighting,
+              pose, image quality, and model bias affect it, and there is no
+              liveness check, so a photo of a photo can fool it.
             </p>
           </div>
         )}

@@ -15,7 +15,7 @@ const config: NextConfig = {
           { key: "Cross-Origin-Embedder-Policy", value: "require-corp" },
           {
             key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
+            value: "camera=(self), microphone=(), geolocation=()",
           },
         ],
       },
