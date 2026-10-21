@@ -317,7 +317,7 @@ export function FaceLab({ session }: { session?: FaceSession }) {
               ) : (
                 <div className="face-placeholder">
                   <ScanFace size={36} />
-                  <span>One clear face, no identity documents</span>
+                  <span>One clear face</span>
                 </div>
               )}
               <button

@@ -1,4 +1,4 @@
-import { HelpWidget } from "@/components/help-panel";
+import { HelpWidget } from "@/components/help-widget";
 import type { Metadata } from "next";
 import "./globals.css";
 import "./site.css";
@@ -57,6 +57,10 @@ export default function RootLayout({
             State, local, and contract exceptions may require review.
           </p>
           <nav aria-label="Footer">
+            <a href="/plan">Hiring plan</a>
+            <a href="/case">E-Verify case</a>
+            <a href="/assistant">Ask EasyVerify</a>
+            <a href="/demo">Demo</a>
             <a href="/sources">Sources &amp; coverage</a>
             <a href="/history">Program history</a>
             <a href="https://www.congressionalappchallenge.us/">

@@ -4,7 +4,6 @@ import {
   readSharedPlan,
   type PublicPlan,
 } from "@/lib/public-plan";
-import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
   MessageCircle,
@@ -604,8 +603,4 @@ export function HelpPanel({ full = false }: { full?: boolean }) {
       )}
     </div>
   );
-}
-export function HelpWidget() {
-  const pathname = usePathname();
-  return pathname === "/assistant" ? null : <HelpPanel />;
 }

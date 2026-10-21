@@ -1133,3 +1133,21 @@ h2 {
   font-size: 12px;
   line-height: 1.4;
 }
+
+/* Current page in the header */
+.site-header nav > a[aria-current="page"] {
+  opacity: 1;
+  font-weight: 600;
+}
+
+/* Respect reduced-motion everywhere, not just on the FAQ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

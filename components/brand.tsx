@@ -1,5 +1,6 @@
 import { ThemeToggle } from "./theme-toggle";
 import Link from "next/link";
+import { NavLink } from "./nav-link";
 export function BrandMark() {
   return (
     <svg
@@ -41,11 +42,11 @@ export function Header() {
       <div className="site-header-inner">
         <Brand />
         <nav aria-label="Main">
-          <Link href="/plan">Hiring plan</Link>
-          <Link href="/case">E-Verify case</Link>
-          <Link href="/assistant">Ask</Link>
-          <Link href="/demo">Demo</Link>
-          <Link href="/sources">Sources</Link>
+          <NavLink href="/plan">Hiring plan</NavLink>
+          <NavLink href="/case">E-Verify case</NavLink>
+          <NavLink href="/assistant">Ask</NavLink>
+          <NavLink href="/demo">Demo</NavLink>
+          <NavLink href="/sources">Sources</NavLink>
           <Link href="/login">Sign in</Link>
           <ThemeToggle />
         </nav>

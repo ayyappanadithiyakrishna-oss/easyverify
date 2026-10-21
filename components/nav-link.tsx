@@ -1,0 +1,20 @@
+"use client";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+/** A header link that marks the current page for sighted and screen-reader users. */
+export function NavLink({
+  href,
+  children,
+}: {
+  href: string;
+  children: React.ReactNode;
+}) {
+  const pathname = usePathname();
+  const current = pathname === href || pathname.startsWith(`${href}/`);
+  return (
+    <Link href={href} aria-current={current ? "page" : undefined}>
+      {children}
+    </Link>
+  );
+}
