@@ -29,6 +29,12 @@ const features = [
     cta: "Start planning",
   },
   {
+    title: "Walk through a case",
+    body: "See each step of an official E-Verify case, what every result means, and the date yours is due.",
+    href: "/case",
+    cta: "Open the walkthrough",
+  },
+  {
     title: "Ask a question",
     body: "An assistant that runs in your browser answers from the rules and cites its source.",
     href: "/assistant",

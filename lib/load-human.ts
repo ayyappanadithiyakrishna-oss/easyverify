@@ -14,7 +14,11 @@ export function loadHuman(): Promise<typeof Human> {
       script.onload = () =>
         window.Human?.default
           ? resolve(window.Human.default)
-          : reject(new Error("Face model library did not initialize."));
+          : ((loading = null),
+            script.remove(),
+            reject(
+              new Error("Face model library did not initialize. Please retry."),
+            ));
       script.onerror = () => {
         loading = null;
         script.remove();

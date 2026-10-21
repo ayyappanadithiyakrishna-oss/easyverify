@@ -14,6 +14,7 @@ export function Header() {
         <Brand />
         <nav aria-label="Main">
           <Link href="/plan">Hiring plan</Link>
+          <Link href="/case">E-Verify case</Link>
           <Link href="/assistant">Ask</Link>
           <Link href="/demo">Demo</Link>
           <Link href="/sources">Sources</Link>

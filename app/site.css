@@ -608,3 +608,127 @@ h2 {
 .document-main .callout {
   display: block;
 }
+
+/* E-Verify case walkthrough */
+.case-due {
+  margin: 40px 0;
+  padding: 28px;
+  border-radius: 18px;
+  background: var(--surface);
+}
+.case-due h2 {
+  margin: 0 0 16px;
+  font-size: 21px;
+}
+.case-due label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.case-due input {
+  padding: 10px 12px;
+  font-size: 17px;
+}
+.case-due-answer {
+  margin: 16px 0 4px;
+  font-size: 21px;
+  color: var(--ink);
+}
+.case-heading {
+  margin: 56px 0 8px;
+  font-size: clamp(26px, 4vw, 32px);
+}
+.case-steps {
+  list-style: none;
+  margin: 24px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 0;
+  counter-reset: case;
+  border-top: 1px solid var(--line);
+}
+.case-steps li {
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
+}
+.case-steps h3 {
+  margin: 4px 0;
+  font-size: 19px;
+}
+.case-steps p {
+  margin: 0;
+}
+.case-photo {
+  margin-top: 24px;
+  padding: 20px 24px;
+  border-radius: 12px;
+  background: var(--surface);
+}
+.case-photo h3 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+.case-photo ul,
+.case-panel ul {
+  margin: 0;
+  padding-left: 20px;
+}
+.case-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 24px 0 16px;
+}
+.case-tab {
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 980px;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 14px;
+}
+.case-tab[data-state="active"] {
+  background: var(--action);
+  color: #fff;
+}
+.case-panel {
+  padding: 28px;
+  border-radius: 18px;
+  background: var(--surface);
+}
+.case-panel h3 {
+  margin: 8px 0;
+  font-size: 24px;
+}
+.case-panel h4 {
+  margin: 20px 0 6px;
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.case-panel p {
+  margin: 0;
+}
+.result-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.result-dot.good {
+  background: #248a3d;
+}
+.result-dot.wait {
+  background: #b25000;
+}
+.result-dot.act {
+  background: #d70015;
+}
+.result-dot.final {
+  background: var(--ink);
+}
+.case-sources {
+  margin-top: 40px;
+}
